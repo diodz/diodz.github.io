@@ -8,6 +8,7 @@ title: Research Associate
 email: diegodiaz@uchicago.edu
 phone: 07845248563
 website: diodz.github.io
+github: metadata
 
 # Social links
 twitter_username:
@@ -47,13 +48,23 @@ about_content: > # this means to ignore newlines until the next config item.
 
   Experience in management through hiring and training 15 students to be research assistants of faculty members in a business school (Escuela de Negocios, Universidad del Desarrollo)
 
-
-
 # Experience Section
 # experience_title: Experience #(Use this to override about experience section title)
 
+# Skills Section
+# skills_title: Skills #(Use this to override about education section title)
+
+# Publication Section
+# publication_title: Publication #(Use this to override about experience section title)
+
 # Education Section
 # educaton_title: Education #(Use this to override about education section title)
+
+# Teaching Section
+# teaching_title: Teaching #(Use this to override about experience section title)
+
+# Conference Section
+# conference_title: Conference #(Use this to override about experience section title)
 
 # More Section
 # more_title: A Little More About Me #(Use this to override about more section title)

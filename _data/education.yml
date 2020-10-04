@@ -1,0 +1,20 @@
+- layout: right
+  name: University of Chicago, Chicago, IL, US
+  dates: Expected Jun 2021
+  qualification: MSc, Computational Analysis and Public Policy
+  description: >
+    Description of qualification
+
+- layout: right
+  name: Pontificia Universidad Católica de Chile, Santiago, Chile
+  dates: 2013 - 2016
+  qualification: MSc, Economics, Topic - General equilibrium trade model with heterogeneous agents
+  description: >
+    PI- Rodrigo Cerda, Raymundo Soto
+
+- layout: right
+  name: Universidad de Chile, Santiago, Chile
+  dates: Dec 2011
+  qualification: BA-MA, Highest Distinction in Engineering
+  description: >
+    PI- Rodrigo Palma, Francisco Gracia

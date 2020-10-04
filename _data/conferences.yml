@@ -1,0 +1,24 @@
+# Conferences template
+- name: Southwestern Social Science Association. SSSA.
+  dates: Oct 2018
+  location: Orlando, FL
+  description: >
+    Talk - "The importance of institutions for economic growth after natural disasters"
+
+- name: Policy conference. School of Government. Universidad del Desarrollo.
+  dates: Mar 2018
+  location: Santiago, Chile
+  description: >
+    Talk- "Impact of information in school choice, experiments and theory"
+
+- name: Sociedad Chilena de Políticas Públicas. SCHPP.
+  dates: Dec 2017
+  location: Santiago, Chile
+  description: >
+    Talk- "The economic consequences of disasters- A synthetic control approach"
+
+- name: National Economic Society of Chile. SECHI
+  dates: Sep 2017
+  location:  Santa Cruz, Chile
+  description: >
+    Talk- "Chile and the Middle-Income Trap, 1875-1939"
