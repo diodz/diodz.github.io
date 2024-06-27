@@ -5,25 +5,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>About Me - Your Name</title>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
 <body class="bg-gray-100">
     <div id="navbar"></div>
 
-    <main class="container mx-auto mt-8 px-4">
+    <main class="container mx-auto mt-20 px-4"> <!-- Added more top margin -->
         <h1 class="text-4xl font-bold mb-4">About Me</h1>
         <p class="text-xl mb-6">
-                As an applied microeconomist, I bridge the gap between economic theory and data science, leveraging cutting-edge computational techniques to solve complex economic problems. My career spans both academia and industry: after dedicating five years to research post-graduation, I transitioned to the private sector in 2021. Currently, I specialize in applying advanced economic analysis and big data methodologies in competition and antitrust consulting at Charles River Associates.</p>
+            As an applied microeconomist, I bridge the gap between economic theory and data science, leveraging cutting-edge computational techniques to solve complex economic problems. My career spans both academia and industry: after dedicating five years to research post-graduation, I transitioned to the private sector in 2021. Currently, I specialize in applying advanced economic analysis and big data methodologies in competition and antitrust consulting at Charles River Associates.</p>
 
-                <section class="mb-8">
-                    <h2 class="text-2xl font-semibold mb-4">Skills</h2>
-                    <div class="w-full max-w-md mx-auto">
-                        <canvas id="skillsChart"></canvas>
-                    </div>
-                </section>
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Skills</h2>
+            <div class="w-full max-w-md mx-auto">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
 
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">Publications and work samples from my early career years</h2>
@@ -62,46 +61,52 @@
             <p>MSc in Computational Analysis and Public Policy (MSCAPP), University of Chicago (Graduated in June, 2021)</p>
             <p>Previous degrees in Engineering/Economics</p>
         </section>
-
-        
     </main>
 
-    <script type="text/babel" src="assets/js/script.js"></script>
+    <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('skillsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Python', 'PySpark & Databricks', 'Data Engineering', 'AI/mlflow', 'Applied Microeconomics', 'Project Management'],
-                    datasets: [{
-                        label: 'Skill Level',
-                        data: [10, 9, 6, 8, 10, 8],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointBackgroundColor: 'rgb(54, 162, 235)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(54, 162, 235)'
-                    }]
-                },
-                options: {
-                    elements: {
-                        line: {
-                            borderWidth: 3
-                        }
+            ReactDOM.render(
+                React.createElement(Navbar),
+                document.getElementById('navbar')
+            );
+
+            // Ensure the chart is rendered after a short delay
+            setTimeout(function() {
+                const ctx = document.getElementById('skillsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Python', 'PySpark & Databricks', 'Data Engineering', 'AI/mlflow', 'Applied Microeconomics', 'Project Management'],
+                        datasets: [{
+                            label: 'Skill Level',
+                            data: [10, 9, 6, 8, 10, 8],
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                        }]
                     },
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: false
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 10
+                    options: {
+                        elements: {
+                            line: {
+                                borderWidth: 3
+                            }
+                        },
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    display: false
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
                         }
                     }
-                }
-            });
+                });
+            }, 100); // Short delay to ensure DOM is ready
         });
     </script>
 </body>
