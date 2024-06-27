@@ -3,60 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name - Economist & Data Scientist</title>
+    <title>Diego Diaz - Economist & Data Scientist</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100">
     <div id="navbar"></div>
 
     <main class="container mx-auto mt-8 px-4">
-        <h1 class="text-4xl font-bold mb-4">Welcome to My Portfolio</h1>
-        <p class="text-xl mb-6">I'm an economist specializing in the intersection of economics and data science, with expertise in PySpark, data engineering, and AI.</p>
+        <h1 class="text-4xl font-bold mb-4">Thinking fast and slow</h1>
+        <p class="text-xl mb-6">Mixing economics and data science</p>
 
         <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Skills & Expertise</h2>
-            <ul class="list-disc list-inside">
-                <li>Economic Analysis</li>
-                <li>Data Science</li>
-                <li>PySpark</li>
-                <li>Data Engineering</li>
-                <li>Artificial Intelligence</li>
-                <li>Machine Learning</li>
-            </ul>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Featured Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white p-4 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-2">Economic Impact Analysis</h3>
-                    <p>Utilized PySpark to analyze large-scale economic data and assess policy impacts.</p>
-                </div>
-                <div class="bg-white p-4 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-2">AI-Driven Forecasting Model</h3>
-                    <p>Developed an AI model to predict economic trends using machine learning techniques.</p>
-                </div>
+            <h2 class="text-2xl font-semibold mb-4">Chart of the Week</h2>
+            <div class="bg-white p-4 rounded shadow">
+                <canvas id="chartOfTheWeek"></canvas>
+                <p class="mt-4">Brief explanation of this week's chart and its economic implications.</p>
             </div>
         </section>
 
         <section>
-            <h2 class="text-2xl font-semibold mb-4">Recent Blog Posts</h2>
+            <h2 class="text-2xl font-semibold mb-4">Recent Entries</h2>
             <div class="space-y-4">
                 <article class="bg-white p-4 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-2">The Role of AI in Modern Economic Analysis</h3>
-                    <p>Exploring how artificial intelligence is transforming the field of economics...</p>
-                </article>
-                <article class="bg-white p-4 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-2">Optimizing Data Pipelines with PySpark</h3>
-                    <p>Best practices for building efficient data processing workflows using PySpark...</p>
-                </article>
+                    <h3 class="text-xl font-semibold mb-2">As new entries are posted, the old ones will go here</h3>
+                    <p>Just started this site so nothing here yet..</p>
+                    <a href="#" class="text-blue-600 hover:underline">Read more</a>
             </div>
         </section>
     </main>
 
     <script type="text/babel" src="assets/js/script.js"></script>
+    <script src="assets/js/chart-of-the-week.js"></script>
 </body>
 </html>
