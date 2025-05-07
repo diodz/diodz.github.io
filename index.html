@@ -2,48 +2,69 @@
 layout: default
 title: Home
 ---
-<main class="container mx-auto mt-8 px-4 max-w-4xl">
-    <h1 class="text-4xl font-bold mb-12 text-gray-900">Latest Posts</h1>
-    
-    <div class="space-y-12">
-        {% for post in site.posts %}
-        <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            <div class="p-8">
-                <div class="flex items-center text-sm text-gray-500 mb-4">
-                    <time datetime="{{ post.date | date_to_xmlschema }}">
-                        {{ post.date | date: "%B %-d, %Y" }}
-                    </time>
-                    {% if post.categories.size > 0 %}
-                    <span class="mx-2">•</span>
-                    <div class="flex space-x-2">
-                        {% for category in post.categories %}
-                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                            {{ category }}
-                        </span>
-                        {% endfor %}
+<main class="container mx-auto px-4 max-w-4xl">
+    <section class="mb-16">
+        <h1 class="text-4xl font-bold mb-6 text-gray-900">Welcome to My Page</h1>
+        <div class="prose prose-lg max-w-none text-gray-600">
+            <p class="mb-4">
+                As an economist and data scientist, I explore the intersection of economic theory, 
+                data science, and technology. This space serves as a collection of my thoughts, 
+                research, and insights on topics ranging from economic policy to machine learning applications.
+            </p>
+            <p class="mb-4">
+                Currently working in competition and antitrust consulting at Charles River Associates, 
+                I combine my background in applied microeconomics with modern computational techniques 
+                to solve complex economic problems.
+            </p>
+            <p>
+                Below you'll find my latest writings and research. Feel free to explore and reach out 
+                if you'd like to discuss any of these topics.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="text-3xl font-bold mb-8 text-gray-900">Latest Posts</h2>
+        <div class="space-y-12">
+            {% for post in site.posts %}
+            <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div class="p-8">
+                    <div class="flex items-center text-sm text-gray-500 mb-4">
+                        <time datetime="{{ post.date | date_to_xmlschema }}">
+                            {{ post.date | date: "%B %-d, %Y" }}
+                        </time>
+                        {% if post.categories.size > 0 %}
+                        <span class="mx-2">•</span>
+                        <div class="flex space-x-2">
+                            {% for category in post.categories %}
+                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                                {{ category }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
-                </div>
-                
-                <h2 class="text-2xl font-bold mb-4 text-gray-900">
-                    <a href="{{ post.url | relative_url }}" class="hover:text-blue-600 transition-colors duration-200">
-                        {{ post.title }}
+                    
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">
+                        <a href="{{ post.url | relative_url }}" class="hover:text-blue-600 transition-colors duration-200">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    
+                    <div class="prose prose-lg max-w-none text-gray-600 mb-6">
+                        {{ post.excerpt | strip_html | truncatewords: 50 }}
+                    </div>
+                    
+                    <a href="{{ post.url | relative_url }}" 
+                       class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
+                        Read more
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
-                </h2>
-                
-                <div class="prose prose-lg max-w-none text-gray-600 mb-6">
-                    {{ post.excerpt | strip_html | truncatewords: 50 }}
                 </div>
-                
-                <a href="{{ post.url | relative_url }}" 
-                   class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
-                    Read more
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
 </main>
