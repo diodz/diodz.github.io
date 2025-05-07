@@ -2,14 +2,136 @@
 layout: default
 ---
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">{{ page.title }}</h1>
-        <p class="post-meta">
-            {{ page.date | date: "%B %-d, %Y" }} • {{ page.author }}
-        </p>
-    </header>
+    <div class="container mx-auto px-4 max-w-4xl">
+        <header class="post-header mb-12">
+            <h1 class="text-4xl font-bold mb-4 text-gray-900">{{ page.title }}</h1>
+            <div class="flex items-center text-sm text-gray-500">
+                <time datetime="{{ page.date | date_to_xmlschema }}">
+                    {{ page.date | date: "%B %-d, %Y" }}
+                </time>
+                {% if page.categories.size > 0 %}
+                <span class="mx-2">•</span>
+                <div class="flex space-x-2">
+                    {% for category in page.categories %}
+                    <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                        {{ category }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </header>
 
-    <div class="post-content">
-        {{ content }}
+        <div class="post-content prose prose-lg max-w-none">
+            {{ content }}
+        </div>
+
+        <footer class="post-footer mt-12 pt-8 border-t border-gray-200">
+            <div class="flex justify-between items-center">
+                <a href="/blog" class="text-blue-600 hover:text-blue-800 font-medium">
+                    ← Back to Blog
+                </a>
+                <div class="text-sm text-gray-500">
+                    Written by {{ page.author | default: site.author }}
+                </div>
+            </div>
+        </footer>
     </div>
-</article> 
+</article>
+
+<style>
+    .post-content {
+        color: #374151;
+    }
+    
+    .post-content h1 {
+        font-size: 2.25rem;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+    }
+    
+    .post-content h2 {
+        font-size: 1.875rem;
+        margin-top: 2rem;
+        margin-bottom: 1.25rem;
+        font-weight: 600;
+        color: #1F2937;
+    }
+    
+    .post-content h3 {
+        font-size: 1.5rem;
+        margin-top: 1.75rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        color: #1F2937;
+    }
+    
+    .post-content p {
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.75;
+    }
+    
+    .post-content ul, .post-content ol {
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+    
+    .post-content li {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .post-content code {
+        background-color: #F3F4F6;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+    }
+    
+    .post-content pre {
+        background-color: #1F2937;
+        color: #F9FAFB;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+    
+    .post-content pre code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+    }
+    
+    .post-content blockquote {
+        border-left: 4px solid #E5E7EB;
+        padding-left: 1rem;
+        margin-left: 0;
+        margin-right: 0;
+        font-style: italic;
+        color: #4B5563;
+    }
+    
+    .post-content a {
+        color: #2563EB;
+        text-decoration: underline;
+    }
+    
+    .post-content a:hover {
+        color: #1D4ED8;
+    }
+    
+    .post-content img {
+        margin: 2rem auto;
+        border-radius: 0.5rem;
+    }
+    
+    .post-content hr {
+        margin: 2rem 0;
+        border-color: #E5E7EB;
+    }
+</style> 
