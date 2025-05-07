@@ -24,7 +24,8 @@ Empirical research bears out the **outsized innovation impact of immigrants**. O
 
 ## High-Skilled and Low-Skilled: A Complementary Workforce
 
-&#x20;*Chart: Both high-skilled and lower-skilled immigrants raise income per person in the destination country, benefiting broad segments of society. High-skilled migrants tend to boost incomes at the top even more (through innovation and productivity), but low-skilled migrants also lift incomes for average workers by filling essential roles and enabling natives to upskill.*
+![Chart showing how both high-skilled and low-skilled immigrants raise income per person](assets/images/chart1-migrants-imf.png)
+*Chart: Both high-skilled and lower-skilled immigrants raise income per person in the destination country, benefiting broad segments of society. High-skilled migrants tend to boost incomes at the top even more (through innovation and productivity), but low-skilled migrants also lift incomes for average workers by filling essential roles and enabling natives to upskill.*
 
 A key point often lost in the immigration debate is that **both high-skilled *and* low-skilled immigration are beneficial – in different but complementary ways**. High-skilled immigrants (such as engineers, doctors, and other professionals) often make headlines for obvious reasons: they fill critical skill gaps in healthcare, STEM fields, and business leadership, and they directly contribute to innovation. Indeed, research shows *skilled immigration can raise wages and employment for native-born workers* at all education levels by spurring knowledge transfer and productivity gains. When a U.S. hospital can hire a foreign-born doctor or a Canadian AI startup can recruit a machine-learning PhD, the whole economy gains from their expertise.
 
