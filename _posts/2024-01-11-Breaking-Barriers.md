@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Breaking Barriers: The Economic Case for Full Labor Mobility in North America"
-date: 2025-01-18
+date: 2024-01-11
 categories: [Labor mobility, Economics]
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Impact of Chile’s Trade Policies on Economic Growth"
-date: 2024-09-20
+date: 2025-01-18
 categories: [International Trade, Chile]
 ---
 
