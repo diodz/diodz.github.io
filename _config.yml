@@ -1,4 +1,4 @@
-title: Diego Diaz
+title: Diego A. Diaz
 description: Personal website and blog
 baseurl: ""
 url: ""
@@ -20,7 +20,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "Diego Diaz"
+      author: "Diego A. Diaz"
 
 # Exclude from processing
 exclude:
