@@ -21,7 +21,7 @@ const Navbar = () => {
                         React.createElement(
                             'span',
                             { className: 'text-xl font-bold' },
-                            'Diego Diaz'
+                            'Diego A. Diaz'
                         )
                     )
                 ),
