@@ -1,220 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            padding-top: 64px; /* Adjust this value based on your navbar height */
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
-    <div id="navbar"></div>
+---
+layout: default
+title: About
+---
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-4">About Me</h1>
+    <p class="text-xl mb-6">
+        As an applied microeconomist, I bridge the gap between economic theory and data science, leveraging cutting-edge computational techniques to solve complex economic problems. My career spans both academia and industry: after dedicating five years to research post-graduation, I transitioned to the private sector in 2021. Currently, I specialize in applying advanced economic analysis and big data methodologies in competition and antitrust consulting at Charles River Associates.
+    </p>
 
-    <main class="container mx-auto mt-8 px-4">
-        <div class="bg-white rounded-lg shadow-md p-8">
-            <h1 class="text-4xl font-bold mb-6">About Me</h1>
-            
-            <div class="prose max-w-none">
-                <p class="text-lg mb-4">
-                    Hi, I'm Diego Diaz, an economist and data scientist passionate about technology and its impact on society.
-                </p>
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Skills</h2>
+        <p class="text-xl mb-6">I have expertise in Python (including PySpark and MLflow), and the Databricks AI framework.</p>
+    </section>
 
-                <h2 class="text-2xl font-bold mt-8 mb-4">Background</h2>
-                <p class="mb-4">
-                    I specialize in combining economic theory with modern data science techniques to solve complex problems
-                    and provide valuable insights. My work focuses on understanding how technology shapes our economic
-                    landscape and how we can leverage data to make better decisions.
-                </p>
-
-                <h2 class="text-2xl font-bold mt-8 mb-4">Expertise</h2>
-                <ul class="list-disc pl-6 mb-4">
-                    <li>Economic Analysis</li>
-                    <li>Data Science</li>
-                    <li>Web Development</li>
-                    <li>Machine Learning</li>
-                    <li>Statistical Modeling</li>
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Publications and work samples from my early career years</h2>
+        <div class="space-y-4">
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="text-xl font-semibold mb-2">Development Economics</h3>
+                <ul class="list-disc list-inside">
+                    <li><a href="https://www.cambridge.org/core/journals/revista-de-historia-economica-journal-of-iberian-and-latin-american-economic-history/article/another-case-of-the-middleincome-trap-chile-19001939/D4D5E0D415E5FA2FFE5B064754D08FD9" class="text-blue-600 hover:underline">Another case of the Middle-Income Trap: Chile, 1900–1939</a> - Using the Synthetic Control Method to examine Chile's economic stagnation.</li>
+                    <li><a href="https://www.cato.org/sites/cato.org/files/2021-01/cj-v41n1-4.pdf" class="text-blue-600 hover:underline">Impact of Institutions in the Aftermath of Natural Disasters</a> - Analyzing how institutional frameworks affect post-disaster recovery.</li>
                 </ul>
-
-                <h2 class="text-2xl font-bold mt-8 mb-4">Contact</h2>
-                <p class="mb-4">
-                    Feel free to reach out to me through:
-                </p>
-                <ul class="list-disc pl-6">
-                    <li>Email: [Your Email]</li>
-                    <li>LinkedIn: [Your LinkedIn]</li>
-                    <li>GitHub: [Your GitHub]</li>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="text-xl font-semibold mb-2">Industrial Organization</h3>
+                <ul class="list-disc list-inside">
+                    <li><a href="https://www.tandfonline.com/doi/abs/10.1080/17477778.2019.1679674?journalCode=tjsm20" class="text-blue-600 hover:underline">An Agent-Based Model of School Choice with Information Asymmetries</a> - Simulating school choice processes using agent-based modeling.</li>
+                </ul>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="text-xl font-semibold mb-2">Machine Learning Applications</h3>
+                <ul class="list-disc list-inside">
+                    <li><a href="https://github.com/diodz/ml-covid" class="text-blue-600 hover:underline">Using Machine Learning to Predict Covid-19 Cases and Deaths</a> - Implementing ML models for pandemic prediction.</li>
+                    <li><a href="https://github.com/diodz/MLPairTrading_Strategy" class="text-blue-600 hover:underline">A k-means clustering pair selection approach for pairs trading</a> - Developing a trading strategy using machine learning techniques.</li>
+                </ul>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="text-xl font-semibold mb-2">Economic Policy Analysis</h3>
+                <ul class="list-disc list-inside">
+                    <li><a href="https://github.com/diodz/new-zealand-epu" class="text-blue-600 hover:underline">New Zealand Economic Policy Uncertainty Index</a> - Creating an EPU index using NLP on newspaper articles.</li>
                 </ul>
             </div>
         </div>
-    </main>
+    </section>
 
-    <script>
-        const Navbar = () => {
-            const [isOpen, setIsOpen] = React.useState(false);
-
-            const toggleMenu = () => setIsOpen(!isOpen);
-
-            return React.createElement(
-                'nav',
-                { className: 'bg-gray-800 text-white fixed top-0 left-0 right-0 z-10' },
-                React.createElement(
-                    'div',
-                    { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' },
-                    React.createElement(
-                        'div',
-                        { className: 'flex items-center justify-between h-16' },
-                        React.createElement(
-                            'div',
-                            { className: 'flex items-center' },
-                            React.createElement(
-                                'a',
-                                { href: '/', className: 'flex-shrink-0' },
-                                React.createElement(
-                                    'span',
-                                    { className: 'text-xl font-bold' },
-                                    'Diego Diaz'
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'hidden md:block' },
-                            React.createElement(
-                                'div',
-                                { className: 'ml-10 flex items-baseline space-x-4' },
-                                React.createElement(
-                                    'a',
-                                    { href: '/', className: 'px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700' },
-                                    'Home'
-                                ),
-                                React.createElement(
-                                    'a',
-                                    { href: '/about.html', className: 'px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700' },
-                                    'About'
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'md:hidden' },
-                            React.createElement(
-                                'button',
-                                {
-                                    onClick: toggleMenu,
-                                    className: 'inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
-                                },
-                                React.createElement(
-                                    'span',
-                                    { className: 'sr-only' },
-                                    'Open main menu'
-                                ),
-                                isOpen
-                                    ? React.createElement(
-                                        'svg',
-                                        {
-                                            className: 'block h-6 w-6',
-                                            xmlns: 'http://www.w3.org/2000/svg',
-                                            fill: 'none',
-                                            viewBox: '0 0 24 24',
-                                            stroke: 'currentColor',
-                                            'aria-hidden': 'true'
-                                        },
-                                        React.createElement('path', {
-                                            strokeLinecap: 'round',
-                                            strokeLinejoin: 'round',
-                                            strokeWidth: '2',
-                                            d: 'M6 18L18 6M6 6l12 12'
-                                        })
-                                    )
-                                    : React.createElement(
-                                        'svg',
-                                        {
-                                            className: 'block h-6 w-6',
-                                            xmlns: 'http://www.w3.org/2000/svg',
-                                            fill: 'none',
-                                            viewBox: '0 0 24 24',
-                                            stroke: 'currentColor',
-                                            'aria-hidden': 'true'
-                                        },
-                                        React.createElement('path', {
-                                            strokeLinecap: 'round',
-                                            strokeLinejoin: 'round',
-                                            strokeWidth: '2',
-                                            d: 'M4 6h16M4 12h16M4 18h16'
-                                        })
-                                    )
-                            )
-                        )
-                    )
-                ),
-                isOpen && React.createElement(
-                    'div',
-                    { className: 'md:hidden' },
-                    React.createElement(
-                        'div',
-                        { className: 'px-2 pt-2 pb-3 space-y-1 sm:px-3' },
-                        React.createElement(
-                            'a',
-                            { href: '/', className: 'block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700' },
-                            'Home'
-                        ),
-                        React.createElement(
-                            'a',
-                            { href: '/about.html', className: 'block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700' },
-                            'About'
-                        )
-                    )
-                )
-            );
-        };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            ReactDOM.render(
-                React.createElement(Navbar),
-                document.getElementById('navbar')
-            );
-
-            const ctx = document.getElementById('skillsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Python', 'PySpark & Databricks', 'Data Engineering', 'AI/mlflow', 'Applied Microeconomics', 'Project Management'],
-                    datasets: [{
-                        label: 'Skill Level',
-                        data: [10, 9, 6, 8, 10, 8],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointBackgroundColor: 'rgb(54, 162, 235)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(54, 162, 235)'
-                    }]
-                },
-                options: {
-                    elements: {
-                        line: {
-                            borderWidth: 3
-                        }
-                    },
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: false
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 10
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Education</h2>
+        <p>MSc in Computational Analysis and Public Policy (MSCAPP), University of Chicago (Graduated in June, 2021)</p>
+        <p>Previous degrees in Engineering/Economics</p>
+    </section>
+</main>
