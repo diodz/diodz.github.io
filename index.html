@@ -2,50 +2,27 @@
 layout: default
 title: Home
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diego Diaz - Blog</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div id="navbar"></div>
-
-    <main class="container mx-auto mt-8 px-4">
-        <h1 class="text-4xl font-bold mb-8">Latest Posts</h1>
-        
-        <div class="grid gap-8">
-            {% for post in site.posts %}
-            <article class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-bold mb-2">
-                    <a href="{{ post.url | relative_url }}" class="text-blue-600 hover:text-blue-800">
-                        {{ post.title }}
-                    </a>
-                </h2>
-                <p class="text-gray-600 mb-4">
-                    {{ post.date | date: "%B %-d, %Y" }}
-                </p>
-                <div class="prose">
-                    {{ post.excerpt }}
-                </div>
-                <a href="{{ post.url | relative_url }}" class="inline-block mt-4 text-blue-600 hover:text-blue-800">
-                    Read more →
+<main class="container mx-auto mt-8 px-4">
+    <h1 class="text-4xl font-bold mb-8">Latest Posts</h1>
+    
+    <div class="grid gap-8">
+        {% for post in site.posts %}
+        <article class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-2">
+                <a href="{{ post.url | relative_url }}" class="text-blue-600 hover:text-blue-800">
+                    {{ post.title }}
                 </a>
-            </article>
-            {% endfor %}
-        </div>
-    </main>
-
-    <script src="assets/js/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            ReactDOM.render(
-                React.createElement(Navbar),
-                document.getElementById('navbar')
-            );
-        });
-    </script>
-</body>
-</html>
+            </h2>
+            <p class="text-gray-600 mb-4">
+                {{ post.date | date: "%B %-d, %Y" }}
+            </p>
+            <div class="prose">
+                {{ post.excerpt }}
+            </div>
+            <a href="{{ post.url | relative_url }}" class="inline-block mt-4 text-blue-600 hover:text-blue-800">
+                Read more →
+            </a>
+        </article>
+        {% endfor %}
+    </div>
+</main>
