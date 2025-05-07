@@ -6,8 +6,6 @@ categories: [International Trade, Chile]
 ---
 
 
-## Introduction
-
 Chile’s dramatic trade liberalization since the mid-1970s offers a unique case to examine how open trade policies influence economic performance. Following a period of protectionism, Chile shifted to an outward-oriented development strategy, unilaterally slashing tariffs in the late 1970s and subsequently pursuing an extensive network of free trade agreements (FTAs). Today, Chile has **33 trade agreements covering 65 economies**, accounting for about **88% of global GDP**. This paper investigates the impact of these trade policies—particularly FTAs—on Chile’s economic growth, employment, and sectoral development. We combine a review of literature on trade liberalization and growth with an empirical analysis using time-series and comparative (difference-in-differences) econometric approaches. Key questions include: Has trade openness accelerated Chile’s GDP growth? Did the surge in FTAs boost employment or alter the economic structure? And what lessons do Chile’s experiences hold for trade policy and growth in other countries?
 
 The remainder of the paper is organized as follows. Section 2 reviews the literature on trade liberalization and economic growth, with emphasis on Chile’s experience. Section 3 describes the data and methodology, including econometric techniques applied. Section 4 presents the empirical results on GDP growth, employment, and sectoral outcomes, while Section 5 discusses robustness checks. Section 6 concludes with policy implications of the findings.
