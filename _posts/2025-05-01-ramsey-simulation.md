@@ -5,9 +5,8 @@ date: 2025-05-01
 categories: [Economics, Simulation]
 ---
 
-# Ramsey-Cass-Koopmans Growth Model Simulation
 
-This post demonstrates an interactive simulation of the Ramsey-Cass-Koopmans growth model, a fundamental framework in modern macroeconomics that describes optimal economic growth paths.
+The Ramsey sim is now live! 
 
 <div class="ramsey-simulation">
     <iframe src="/assets/ramsey-simulation.html" 
