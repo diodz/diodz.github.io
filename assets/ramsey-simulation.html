@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramsey Model Simulation</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        label {
+            font-weight: 500;
+            color: #333;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        .value-display {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+        .line {
+            fill: none;
+            stroke-width: 2;
+        }
+        .capital-line {
+            stroke: #1f77b4;
+        }
+        .consumption-line {
+            stroke: #ff7f0e;
+        }
+        .axis path,
+        .axis line {
+            stroke: #ccc;
+        }
+        .axis text {
+            fill: #666;
+        }
+        .grid line {
+            stroke: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label for="alpha">Capital Share (α)</label>
+                <input type="range" id="alpha" min="0.1" max="0.9" step="0.1" value="0.3">
+                <span class="value-display">0.3</span>
+            </div>
+            <div class="control-group">
+                <label for="beta">Discount Factor (β)</label>
+                <input type="range" id="beta" min="0.5" max="0.99" step="0.01" value="0.95">
+                <span class="value-display">0.95</span>
+            </div>
+            <div class="control-group">
+                <label for="delta">Depreciation Rate (δ)</label>
+                <input type="range" id="delta" min="0.01" max="0.2" step="0.01" value="0.1">
+                <span class="value-display">0.1</span>
+            </div>
+            <div class="control-group">
+                <label for="k0">Initial Capital (k₀)</label>
+                <input type="range" id="k0" min="0.1" max="2" step="0.1" value="0.5">
+                <span class="value-display">0.5</span>
+            </div>
+        </div>
+        <div class="chart-container" id="chart"></div>
+    </div>
+
+    <script>
+        // Parameters
+        let alpha = 0.3;  // Capital share
+        let beta = 0.95;  // Discount factor
+        let delta = 0.1;  // Depreciation rate
+        let k0 = 0.5;     // Initial capital
+
+        // Simulation settings
+        const T = 50;     // Time periods
+        const dt = 0.1;   // Time step
+
+        // Set up the chart
+        const margin = {top: 20, right: 30, bottom: 40, left: 60};
+        const width = document.querySelector('.chart-container').clientWidth - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select('#chart')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        // Add grid
+        svg.append('g')
+            .attr('class', 'grid')
+            .call(d3.axisLeft(d3.scaleLinear().domain([0, 1]).range([height, 0]))
+                .tickSize(-width)
+                .tickFormat(''));
+
+        // Add axes
+        const xAxis = svg.append('g')
+            .attr('class', 'axis')
+            .attr('transform', `translate(0,${height})`);
+
+        const yAxis = svg.append('g')
+            .attr('class', 'axis');
+
+        // Add lines
+        const capitalLine = svg.append('path')
+            .attr('class', 'line capital-line');
+
+        const consumptionLine = svg.append('path')
+            .attr('class', 'line consumption-line');
+
+        // Add legend
+        const legend = svg.append('g')
+            .attr('transform', `translate(${width - 100}, 20)`);
+
+        legend.append('line')
+            .attr('x1', 0)
+            .attr('y1', 0)
+            .attr('x2', 20)
+            .attr('y2', 0)
+            .attr('class', 'line capital-line');
+
+        legend.append('text')
+            .attr('x', 25)
+            .attr('y', 4)
+            .text('Capital')
+            .style('font-size', '12px');
+
+        legend.append('line')
+            .attr('x1', 0)
+            .attr('y1', 20)
+            .attr('x2', 20)
+            .attr('y2', 20)
+            .attr('class', 'line consumption-line');
+
+        legend.append('text')
+            .attr('x', 25)
+            .attr('y', 24)
+            .text('Consumption')
+            .style('font-size', '12px');
+
+        function updateChart() {
+            // Generate data
+            const data = [];
+            let k = k0;
+            let c = 0.5;  // Initial consumption guess
+
+            for (let t = 0; t <= T; t += dt) {
+                // Production function: f(k) = k^alpha
+                const f = Math.pow(k, alpha);
+                
+                // Capital accumulation: k' = f(k) - c - delta*k
+                const k_next = k + dt * (f - c - delta * k);
+                
+                // Consumption growth: c'/c = (f'(k) - delta - rho)/sigma
+                // where f'(k) = alpha * k^(alpha-1)
+                const f_prime = alpha * Math.pow(k, alpha - 1);
+                const c_next = c * (1 + dt * (f_prime - delta - (1-beta)/beta));
+                
+                data.push({
+                    time: t,
+                    capital: k,
+                    consumption: c
+                });
+
+                k = k_next;
+                c = c_next;
+            }
+
+            // Update scales
+            const x = d3.scaleLinear()
+                .domain([0, T])
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => Math.max(d.capital, d.consumption))])
+                .range([height, 0]);
+
+            // Update axes
+            xAxis.call(d3.axisBottom(x));
+            yAxis.call(d3.axisLeft(y));
+
+            // Update lines
+            const line = d3.line()
+                .x(d => x(d.time))
+                .y(d => y(d.value));
+
+            capitalLine.datum(data.map(d => ({time: d.time, value: d.capital})))
+                .attr('d', line);
+
+            consumptionLine.datum(data.map(d => ({time: d.time, value: d.consumption})))
+                .attr('d', line);
+        }
+
+        // Update value displays and chart when sliders change
+        document.querySelectorAll('input[type="range"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                e.target.nextElementSibling.textContent = value;
+                
+                switch(e.target.id) {
+                    case 'alpha': alpha = value; break;
+                    case 'beta': beta = value; break;
+                    case 'delta': delta = value; break;
+                    case 'k0': k0 = value; break;
+                }
+                
+                updateChart();
+            });
+        });
+
+        // Initial chart update
+        updateChart();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const newWidth = document.querySelector('.chart-container').clientWidth - margin.left - margin.right;
+            svg.attr('width', newWidth + margin.left + margin.right);
+            updateChart();
+        });
+    </script>
+</body>
+</html> 
