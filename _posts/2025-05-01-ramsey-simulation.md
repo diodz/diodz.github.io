@@ -8,13 +8,16 @@ categories: [Economics, Simulation]
 
 The Ramsey sim is now live! 
 
-<div class="ramsey-simulation">
+<div class="ramsey-simulation" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; background: #1e1e1e;">
     <iframe src="/assets/ramsey-simulation.html" 
-            style="width: 100%; height: 800px; border: none; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);"
+            style="width: 100%; height: 100%; border: none;"
             title="Ramsey-Cass-Koopmans Model Simulation">
     </iframe>
 </div>
 
+<div style="height: 100vh; visibility: hidden;">
+    <!-- This div ensures the post has enough height to scroll -->
+</div>
 ## About the Simulation
 
 The Ramsey-Cass-Koopmans model is a neoclassical model of economic growth that extends the Solow model by endogenizing the savings rate. This simulation allows you to explore:
