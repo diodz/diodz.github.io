@@ -3,252 +3,601 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramsey Model Simulation</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Cool Ramsey Growth Model Simulation</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .controls {
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .control-group {
+            padding: 0;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            overflow-x: hidden;
         }
-        label {
-            font-weight: 500;
-            color: #333;
-        }
-        input[type="range"] {
+        header {
             width: 100%;
+            background-color: #333;
+            color: #00c6ff; /* Neon blue */
+            padding: 15px 0;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00c6ff, 0 0 20px #00c6ff;
+            border-bottom: 3px solid #00c6ff;
+            margin-bottom: 20px;
         }
-        .value-display {
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 1600px;
+            padding: 10px;
+        }
+        .controls-panel {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+            margin: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+        .controls-panel h3 {
+            margin-top: 0;
+            color: #00c6ff;
+            border-bottom: 1px solid #00c6ff;
+            padding-bottom: 5px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
             font-size: 0.9em;
-            color: #666;
         }
-        .chart-container {
+        .control-group input[type="range"] {
             width: 100%;
-            height: 400px;
+            cursor: pointer;
         }
-        .line {
-            fill: none;
-            stroke-width: 2;
+        .control-group span {
+            font-weight: bold;
+            color: #ffab00; /* Neon orange */
         }
-        .capital-line {
-            stroke: #1f77b4;
+        .simulation-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            flex-grow: 1;
         }
-        .consumption-line {
-            stroke: #ff7f0e;
+        canvas {
+            border: 1px solid #00c6ff;
+            border-radius: 8px;
+            background-color: #252525;
+            box-shadow: 0 0 15px rgba(0, 198, 255, 0.2);
+            margin-bottom: 15px;
         }
-        .axis path,
-        .axis line {
-            stroke: #ccc;
+        #phaseDiagramCanvas {
+            cursor: crosshair;
         }
-        .axis text {
-            fill: #666;
+        .plot-title {
+            font-size: 1.2em;
+            color: #00c6ff;
+            margin-bottom: 5px;
+            text-align: center;
         }
-        .grid line {
-            stroke: #eee;
+        .info-box {
+            background-color: #2a2a2a;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            width: calc(100% - 30px);
+            max-width: 400px;
+            margin-top:10px;
+            box-shadow: 0 0 10px rgba(0,198,255,0.2);
+        }
+        .info-box p { margin: 5px 0; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Cool particle effect for the trajectory point */
+        .particle {
+            position: absolute;
+            background-color: #ffab00; /* Neon orange */
+            border-radius: 50%;
+            pointer-events: none; /* Important so it doesn't interfere with canvas clicks */
+            box-shadow: 0 0 8px #ffab00, 0 0 12px #ffab00;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
         }
     </style>
 </head>
 <body>
+    <header>Ramsey-Cass-Koopmans Growth Model Visualizer</header>
+
     <div class="container">
-        <div class="controls">
+        <div class="controls-panel">
+            <h3>Parameters</h3>
             <div class="control-group">
-                <label for="alpha">Capital Share (α)</label>
-                <input type="range" id="alpha" min="0.1" max="0.9" step="0.1" value="0.3">
-                <span class="value-display">0.3</span>
+                <label for="alpha">Capital Share (α): <span id="alphaValue">0.3</span></label>
+                <input type="range" id="alpha" min="0.1" max="0.9" step="0.01" value="0.3">
             </div>
             <div class="control-group">
-                <label for="beta">Discount Factor (β)</label>
-                <input type="range" id="beta" min="0.5" max="0.99" step="0.01" value="0.95">
-                <span class="value-display">0.95</span>
+                <label for="delta">Depreciation (δ): <span id="deltaValue">0.05</span></label>
+                <input type="range" id="delta" min="0.01" max="0.2" step="0.005" value="0.05">
             </div>
             <div class="control-group">
-                <label for="delta">Depreciation Rate (δ)</label>
-                <input type="range" id="delta" min="0.01" max="0.2" step="0.01" value="0.1">
-                <span class="value-display">0.1</span>
+                <label for="rho">Discount Rate (ρ): <span id="rhoValue">0.03</span></label>
+                <input type="range" id="rho" min="0.01" max="0.1" step="0.005" value="0.03">
             </div>
             <div class="control-group">
-                <label for="k0">Initial Capital (k₀)</label>
-                <input type="range" id="k0" min="0.1" max="2" step="0.1" value="0.5">
-                <span class="value-display">0.5</span>
+                <label for="theta">Risk Aversion (θ): <span id="thetaValue">2.0</span></label>
+                <input type="range" id="theta" min="0.5" max="5" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label for="n_pop">Population Growth (n): <span id="n_popValue">0.01</span></label>
+                <input type="range" id="n_pop" min="0" max="0.05" step="0.001" value="0.01">
+            </div>
+            <div class="control-group">
+                <label for="g_tech">Tech Growth (g): <span id="g_techValue">0.02</span></label>
+                <input type="range" id="g_tech" min="0" max="0.05" step="0.001" value="0.02">
+            </div>
+            <div class="control-group">
+                <label for="A_tfp">Total Factor Productivity (A): <span id="A_tfpValue">1.0</span></label>
+                <input type="range" id="A_tfp" min="0.5" max="2.0" step="0.05" value="1.0">
+            </div>
+            <button id="resetButton">Reset Simulation</button>
+            <div class="info-box">
+                <p>Steady State (k*): <span id="k_ss_val">N/A</span></p>
+                <p>Steady State (c*): <span id="c_ss_val">N/A</span></p>
+                <p>Click on Phase Diagram to start trajectory.</p>
             </div>
         </div>
-        <div class="chart-container" id="chart"></div>
+
+        <div class="simulation-area">
+            <div class="plot-title">Phase Diagram (k vs c)</div>
+            <canvas id="phaseDiagramCanvas" width="600" height="450"></canvas>
+            <div class="plot-title">Capital per Effective Worker k(t)</div>
+            <canvas id="k_t_Canvas" width="600" height="150"></canvas>
+            <div class="plot-title">Consumption per Effective Worker c(t)</div>
+            <canvas id="c_t_Canvas" width="600" height="150"></canvas>
+        </div>
     </div>
 
     <script>
-        // Parameters
-        let alpha = 0.3;  // Capital share
-        let beta = 0.95;  // Discount factor
-        let delta = 0.1;  // Depreciation rate
-        let k0 = 0.5;     // Initial capital
+        // --- DOM Elements ---
+        const alphaSlider = document.getElementById('alpha');
+        const deltaSlider = document.getElementById('delta');
+        const rhoSlider = document.getElementById('rho');
+        const thetaSlider = document.getElementById('theta');
+        const n_popSlider = document.getElementById('n_pop');
+        const g_techSlider = document.getElementById('g_tech');
+        const A_tfpSlider = document.getElementById('A_tfp');
 
-        // Simulation settings
-        const T = 50;     // Time periods
-        const dt = 0.1;   // Time step
+        const alphaValueSpan = document.getElementById('alphaValue');
+        const deltaValueSpan = document.getElementById('deltaValue');
+        const rhoValueSpan = document.getElementById('rhoValue');
+        const thetaValueSpan = document.getElementById('thetaValue');
+        const n_popValueSpan = document.getElementById('n_popValue');
+        const g_techValueSpan = document.getElementById('g_techValue');
+        const A_tfpValueSpan = document.getElementById('A_tfpValue');
 
-        // Set up the chart
-        const margin = {top: 20, right: 30, bottom: 40, left: 60};
-        const width = document.querySelector('.chart-container').clientWidth - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
+        const k_ss_valSpan = document.getElementById('k_ss_val');
+        const c_ss_valSpan = document.getElementById('c_ss_val');
 
-        const svg = d3.select('#chart')
-            .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', `translate(${margin.left},${margin.top})`);
+        const resetButton = document.getElementById('resetButton');
 
-        // Add grid
-        svg.append('g')
-            .attr('class', 'grid')
-            .call(d3.axisLeft(d3.scaleLinear().domain([0, 1]).range([height, 0]))
-                .tickSize(-width)
-                .tickFormat(''));
+        const phaseCanvas = document.getElementById('phaseDiagramCanvas');
+        const k_t_Canvas = document.getElementById('k_t_Canvas');
+        const c_t_Canvas = document.getElementById('c_t_Canvas');
+        const phaseCtx = phaseCanvas.getContext('2d');
+        const k_t_Ctx = k_t_Canvas.getContext('2d');
+        const c_t_Ctx = c_t_Canvas.getContext('2d');
 
-        // Add axes
-        const xAxis = svg.append('g')
-            .attr('class', 'axis')
-            .attr('transform', `translate(0,${height})`);
+        // --- Parameters ---
+        let params = {
+            alpha: 0.3,
+            delta: 0.05,
+            rho: 0.03,
+            theta: 2.0,
+            n: 0.01,
+            g: 0.02,
+            A: 1.0
+        };
 
-        const yAxis = svg.append('g')
-            .attr('class', 'axis');
+        // --- Simulation State ---
+        let k_current, c_current;
+        let trajectory = [];
+        let timeSeries_k = [];
+        let timeSeries_c = [];
+        let time = 0;
+        let simulationRunning = false;
+        let animationFrameId;
+        const dt = 0.1; // Time step for Euler integration
+        const maxTimeSteps = 2000; // Max steps for a trajectory
 
-        // Add lines
-        const capitalLine = svg.append('path')
-            .attr('class', 'line capital-line');
+        // --- Phase Diagram Scale ---
+        let k_max_display = 20; 
+        let c_max_display = 5;  
 
-        const consumptionLine = svg.append('path')
-            .attr('class', 'line consumption-line');
-
-        // Add legend
-        const legend = svg.append('g')
-            .attr('transform', `translate(${width - 100}, 20)`);
-
-        legend.append('line')
-            .attr('x1', 0)
-            .attr('y1', 0)
-            .attr('x2', 20)
-            .attr('y2', 0)
-            .attr('class', 'line capital-line');
-
-        legend.append('text')
-            .attr('x', 25)
-            .attr('y', 4)
-            .text('Capital')
-            .style('font-size', '12px');
-
-        legend.append('line')
-            .attr('x1', 0)
-            .attr('y1', 20)
-            .attr('x2', 20)
-            .attr('y2', 20)
-            .attr('class', 'line consumption-line');
-
-        legend.append('text')
-            .attr('x', 25)
-            .attr('y', 24)
-            .text('Consumption')
-            .style('font-size', '12px');
-
-        function updateChart() {
-            // Generate data
-            const data = [];
-            let k = k0;
-            let c = 0.5;  // Initial consumption guess
-
-            for (let t = 0; t <= T; t += dt) {
-                // Production function: f(k) = k^alpha
-                const f = Math.pow(k, alpha);
-                
-                // Capital accumulation: k' = f(k) - c - delta*k
-                const k_next = k + dt * (f - c - delta * k);
-                
-                // Consumption growth: c'/c = (f'(k) - delta - rho)/sigma
-                // where f'(k) = alpha * k^(alpha-1)
-                const f_prime = alpha * Math.pow(k, alpha - 1);
-                const c_next = c * (1 + dt * (f_prime - delta - (1-beta)/beta));
-                
-                data.push({
-                    time: t,
-                    capital: k,
-                    consumption: c
-                });
-
-                k = k_next;
-                c = c_next;
-            }
-
-            // Update scales
-            const x = d3.scaleLinear()
-                .domain([0, T])
-                .range([0, width]);
-
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => Math.max(d.capital, d.consumption))])
-                .range([height, 0]);
-
-            // Update axes
-            xAxis.call(d3.axisBottom(x));
-            yAxis.call(d3.axisLeft(y));
-
-            // Update lines
-            const line = d3.line()
-                .x(d => x(d.time))
-                .y(d => y(d.value));
-
-            capitalLine.datum(data.map(d => ({time: d.time, value: d.capital})))
-                .attr('d', line);
-
-            consumptionLine.datum(data.map(d => ({time: d.time, value: d.consumption})))
-                .attr('d', line);
+        // --- Production Function and its derivative ---
+        function f(k) {
+            if (k <= 0) return 0;
+            return params.A * Math.pow(k, params.alpha);
         }
 
-        // Update value displays and chart when sliders change
-        document.querySelectorAll('input[type="range"]').forEach(input => {
-            input.addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                e.target.nextElementSibling.textContent = value;
-                
-                switch(e.target.id) {
-                    case 'alpha': alpha = value; break;
-                    case 'beta': beta = value; break;
-                    case 'delta': delta = value; break;
-                    case 'k0': k0 = value; break;
+        function f_prime(k) {
+            if (k <= 0) return params.A * Infinity; // Or a very large number to push k away from 0
+            return params.alpha * params.A * Math.pow(k, params.alpha - 1);
+        }
+
+        // --- Differential Equations ---
+        function dk_dt(k, c) {
+            return f(k) - c - (params.n + params.g + params.delta) * k;
+        }
+
+        function dc_dt(k, c) {
+            if (c <= 0) return 0; // Consumption cannot be negative
+            const term_in_bracket = f_prime(k) - (params.rho + params.theta * params.g);
+            return (term_in_bracket * c) / params.theta;
+        }
+        
+        // --- Steady State Calculation ---
+        let k_ss, c_ss;
+        function calculateSteadyState() {
+            // From dc/dt = 0: f'(k_ss) = rho + theta*g
+            // alpha * A * k_ss^(alpha-1) = rho + theta*g
+            // k_ss^(alpha-1) = (rho + theta*g) / (alpha*A)
+            // k_ss = [ (rho + theta*g) / (alpha*A) ] ^ (1/(alpha-1))
+            if (params.alpha >= 1) { // Avoid division by zero or strange exponents
+                k_ss = NaN; c_ss = NaN;
+                return;
+            }
+            const numerator = params.rho + params.theta * params.g;
+            const denominator = params.alpha * params.A;
+            if (numerator <=0 || denominator <=0) {
+                 k_ss = NaN; c_ss = NaN;
+                return;
+            }
+            k_ss = Math.pow(numerator / denominator, 1 / (params.alpha - 1));
+
+            // From dk/dt = 0: c_ss = f(k_ss) - (n+g+delta)*k_ss
+            c_ss = f(k_ss) - (params.n + params.g + params.delta) * k_ss;
+
+            if (isNaN(k_ss) || isNaN(c_ss) || k_ss <=0 || c_ss <=0) {
+                k_ss_valSpan.textContent = "Invalid";
+                c_ss_valSpan.textContent = "Invalid";
+                k_ss = NaN; c_ss = NaN;
+            } else {
+                k_ss_valSpan.textContent = k_ss.toFixed(3);
+                c_ss_valSpan.textContent = c_ss.toFixed(3);
+                // Adjust display range based on steady state, if valid
+                k_max_display = Math.max(10, Math.ceil(k_ss * 2.5));
+                c_max_display = Math.max(2, Math.ceil(c_ss * 2.5));
+            }
+        }
+
+        // --- Drawing Functions ---
+        function toScreenX(k, canvas = phaseCanvas) {
+            return (k / k_max_display) * canvas.width;
+        }
+        function toScreenY(c, canvas = phaseCanvas) {
+            return canvas.height - (c / c_max_display) * canvas.height;
+        }
+        function fromScreenX(x, canvas = phaseCanvas) {
+            return (x / canvas.width) * k_max_display;
+        }
+        function fromScreenY(y, canvas = phaseCanvas) {
+            return ((canvas.height - y) / canvas.height) * c_max_display;
+        }
+
+        function drawAxes(ctx, k_max, c_max, canvas) {
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            // X-axis (k)
+            ctx.moveTo(0, canvas.height - 1);
+            ctx.lineTo(canvas.width, canvas.height - 1);
+            // Y-axis (c)
+            ctx.moveTo(1, 0);
+            ctx.lineTo(1, canvas.height);
+            ctx.stroke();
+
+            ctx.fillStyle = '#aaa';
+            ctx.font = '10px Arial';
+            // X-axis labels
+            for (let i = 0; i <= 5; i++) {
+                const k_val = (k_max / 5) * i;
+                ctx.fillText(k_val.toFixed(1), toScreenX(k_val, canvas) - (i > 0 ? 5:0), canvas.height - 5);
+            }
+            // Y-axis labels
+            for (let i = 0; i <= 5; i++) {
+                const c_val = (c_max / 5) * i;
+                 if (c_val > 0.01) ctx.fillText(c_val.toFixed(1), 5, toScreenY(c_val, canvas) + (i<5 ? 5:0) );
+            }
+        }
+
+        function drawLoci(ctx) {
+            // dk/dt = 0 locus: c = f(k) - (n+g+delta)k
+            ctx.strokeStyle = '#00c6ff'; // Neon Blue
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            let firstPoint = true;
+            for (let k_val = 0.01; k_val <= k_max_display; k_val += k_max_display/300) {
+                const c_val = f(k_val) - (params.n + params.g + params.delta) * k_val;
+                if (c_val >= 0 && c_val <= c_max_display) {
+                    if (firstPoint) {
+                        ctx.moveTo(toScreenX(k_val), toScreenY(c_val));
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(toScreenX(k_val), toScreenY(c_val));
+                    }
                 }
-                
-                updateChart();
-            });
+            }
+            ctx.stroke();
+
+            // dc/dt = 0 locus: k = k_ss (vertical line)
+            if (!isNaN(k_ss) && k_ss > 0 && k_ss <= k_max_display) {
+                ctx.strokeStyle = '#ffab00'; // Neon Orange
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(toScreenX(k_ss), 0);
+                ctx.lineTo(toScreenX(k_ss), phaseCanvas.height);
+                ctx.stroke();
+            }
+        }
+
+        function drawSteadyState(ctx) {
+            if (!isNaN(k_ss) && !isNaN(c_ss) && k_ss > 0 && c_ss > 0 && k_ss <= k_max_display && c_ss <= c_max_display) {
+                ctx.fillStyle = '#ff4081'; // Neon Pink
+                ctx.beginPath();
+                ctx.arc(toScreenX(k_ss), toScreenY(c_ss), 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        
+        let particles = [];
+        const MAX_PARTICLES = 10; // For trajectory trail
+
+        function createParticle(x, y, size) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            document.body.appendChild(particle); // Add to body to be absolutely positioned relative to viewport
+            
+            const canvasRect = phaseCanvas.getBoundingClientRect();
+            const bodyRect = document.body.getBoundingClientRect();
+            
+            // Adjust for canvas position relative to viewport
+            const particleX = canvasRect.left - bodyRect.left + x;
+            const particleY = canvasRect.top - bodyRect.top + y;
+
+            particle.style.left = `${particleX - size/2}px`;
+            particle.style.top = `${particleY - size/2}px`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Trigger reflow to apply initial style before transition
+            particle.getBoundingClientRect(); 
+            particle.style.opacity = 1; // Fade in
+
+            // Add to particles array and manage its size
+            particles.push(particle);
+            if (particles.length > MAX_PARTICLES) {
+                const oldParticle = particles.shift();
+                oldParticle.style.opacity = 0; // Fade out
+                setTimeout(() => oldParticle.remove(), 500); // Remove after fade
+            }
+             // Auto-fade and remove current particle after a delay
+            setTimeout(() => {
+                particle.style.opacity = 0;
+                setTimeout(() => particle.remove(), 500);
+            }, 800); // Particle lifetime
+        }
+
+        function clearParticles() {
+            particles.forEach(p => p.remove());
+            particles = [];
+        }
+
+
+        function drawTrajectory(ctx) {
+            if (trajectory.length < 2) return;
+            
+            ctx.strokeStyle = '#39ff14'; // Neon Green
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(toScreenX(trajectory[0].k), toScreenY(trajectory[0].c));
+            for (let i = 1; i < trajectory.length; i++) {
+                ctx.lineTo(toScreenX(trajectory[i].k), toScreenY(trajectory[i].c));
+            }
+            ctx.stroke();
+
+            // "Cool" current point
+            const lastPoint = trajectory[trajectory.length - 1];
+            const screenX = toScreenX(lastPoint.k);
+            const screenY = toScreenY(lastPoint.c);
+            
+            createParticle(screenX, screenY, 8); // Create particle at current point
+
+            // Simple dot as fallback or primary marker
+            ctx.fillStyle = '#ffab00';
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function drawTimeSeries(ctx, data, t_max, val_max, color, canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawAxes(ctx, t_max, val_max, canvas); // Re-use drawAxes with appropriate labels
+
+            if (data.length < 2) return;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo((data[0].t / t_max) * canvas.width, canvas.height - (data[0].val / val_max) * canvas.height);
+            for (let i = 1; i < data.length; i++) {
+                 ctx.lineTo((data[i].t / t_max) * canvas.width, canvas.height - (data[i].val / val_max) * canvas.height);
+            }
+            ctx.stroke();
+        }
+
+        // --- Main Render Function ---
+        function render() {
+            phaseCtx.clearRect(0, 0, phaseCanvas.width, phaseCanvas.height);
+            drawAxes(phaseCtx, k_max_display, c_max_display, phaseCanvas);
+            drawLoci(phaseCtx);
+            drawSteadyState(phaseCtx);
+            drawTrajectory(phaseCtx);
+
+            const t_max_plot = Math.max(10, time);
+            const k_max_plot_ts = Math.max(1, ...timeSeries_k.map(p => p.val), k_max_display/2);
+            const c_max_plot_ts = Math.max(0.5, ...timeSeries_c.map(p => p.val), c_max_display/2);
+
+            drawTimeSeries(k_t_Ctx, timeSeries_k, t_max_plot, k_max_plot_ts, '#00c6ff', k_t_Canvas);
+            drawTimeSeries(c_t_Ctx, timeSeries_c, t_max_plot, c_max_plot_ts, '#ffab00', c_t_Canvas);
+        }
+
+        // --- Simulation Loop ---
+        function simulationStep() {
+            if (!simulationRunning) return;
+
+            const dk = dk_dt(k_current, c_current) * dt;
+            const dc = dc_dt(k_current, c_current) * dt;
+
+            k_current += dk;
+            c_current += dc;
+            time += dt;
+
+            // Stop if out of bounds or steady (or c crashes)
+            if (k_current <= 0.001 || c_current <= 0.001 || k_current > k_max_display * 1.5 || c_current > c_max_display * 1.5 || trajectory.length > maxTimeSteps) {
+                simulationRunning = false;
+                k_current = Math.max(0.001, k_current); // clamp k
+                c_current = Math.max(0.001, c_current); // clamp c
+            }
+             // Stop if very close to steady state
+            if (!isNaN(k_ss) && !isNaN(c_ss) && Math.abs(k_current - k_ss) < 0.001 && Math.abs(c_current - c_ss) < 0.001) {
+                simulationRunning = false;
+            }
+
+            trajectory.push({ k: k_current, c: c_current });
+            timeSeries_k.push({ t: time, val: k_current });
+            timeSeries_c.push({ t: time, val: c_current });
+
+            render();
+
+            if (simulationRunning) {
+                animationFrameId = requestAnimationFrame(simulationStep);
+            }
+        }
+        
+        function resetSimulationState() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            simulationRunning = false;
+            trajectory = [];
+            timeSeries_k = [];
+            timeSeries_c = [];
+            time = 0;
+            clearParticles(); // Clear any existing particles
+            render(); // Redraw static elements
+        }
+
+        // --- Event Listeners ---
+        function updateParameters() {
+            params.alpha = parseFloat(alphaSlider.value);
+            params.delta = parseFloat(deltaSlider.value);
+            params.rho = parseFloat(rhoSlider.value);
+            params.theta = parseFloat(thetaSlider.value);
+            params.n = parseFloat(n_popSlider.value);
+            params.g = parseFloat(g_techSlider.value);
+            params.A = parseFloat(A_tfpSlider.value);
+
+            alphaValueSpan.textContent = params.alpha.toFixed(2);
+            deltaValueSpan.textContent = params.delta.toFixed(3);
+            rhoValueSpan.textContent = params.rho.toFixed(3);
+            thetaValueSpan.textContent = params.theta.toFixed(1);
+            n_popValueSpan.textContent = params.n.toFixed(3);
+            g_techValueSpan.textContent = params.g.toFixed(3);
+            A_tfpValueSpan.textContent = params.A.toFixed(2);
+            
+            calculateSteadyState();
+            resetSimulationState(); // Also calls render
+        }
+
+        [alphaSlider, deltaSlider, rhoSlider, thetaSlider, n_popSlider, g_techSlider, A_tfpSlider].forEach(slider => {
+            slider.addEventListener('input', updateParameters);
         });
 
-        // Initial chart update
-        updateChart();
+        phaseCanvas.addEventListener('click', (event) => {
+            resetSimulationState();
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const newWidth = document.querySelector('.chart-container').clientWidth - margin.left - margin.right;
-            svg.attr('width', newWidth + margin.left + margin.right);
-            updateChart();
+            const rect = phaseCanvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            k_current = fromScreenX(x);
+            c_current = fromScreenY(y);
+
+            if (k_current <= 0 || c_current <=0) return; // Don't start if click is on axis or negative
+
+            trajectory.push({ k: k_current, c: c_current });
+            timeSeries_k.push({ t: time, val: k_current });
+            timeSeries_c.push({ t: time, val: c_current });
+            
+            simulationRunning = true;
+            animationFrameId = requestAnimationFrame(simulationStep);
         });
+        
+        resetButton.addEventListener('click', () => {
+            resetSimulationState();
+            // Optional: could also reset parameters to default here
+        });
+
+        // --- Initial Setup ---
+        updateParameters(); // Calculate initial steady state & render
+
+        // Make canvases somewhat responsive (simple scaling)
+        function resizeCanvases() {
+            const simAreaWidth = document.querySelector('.simulation-area').offsetWidth;
+            const canvasWidth = Math.min(600, simAreaWidth - 20); // Max width 600 or available
+            
+            phaseCanvas.width = canvasWidth;
+            phaseCanvas.height = canvasWidth * 0.75; // Maintain aspect ratio
+            
+            k_t_Canvas.width = canvasWidth;
+            k_t_Canvas.height = canvasWidth * 0.25;
+            
+            c_t_Canvas.width = canvasWidth;
+            c_t_Canvas.height = canvasWidth * 0.25;
+
+            // After resize, we need to recalculate steady state for k_max/c_max potentially
+            // and then redraw everything.
+            calculateSteadyState(); //This might adjust k_max_display, c_max_display
+            render(); // Redraw static elements with new sizes
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        resizeCanvases(); // Initial call
+
     </script>
 </body>
 </html> 
