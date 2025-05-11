@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Edgeworth Box</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .visualization {
+            flex-grow: 1;
+            position: relative;
+        }
+        .controls {
+            width: 300px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+        }
+        .control-group {
+            margin-bottom: 20px;
+        }
+        .control-group h3 {
+            color: #00c6ff;
+            margin-top: 0;
+            border-bottom: 1px solid #00c6ff;
+            padding-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .value-display {
+            color: #ffab00;
+            font-weight: bold;
+        }
+        .info-box {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-box p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .highlight {
+            color: #00c6ff;
+        }
+        .axis path,
+        .axis line {
+            stroke: #555;
+        }
+        .axis text {
+            fill: #aaa;
+        }
+        .indifference-curve {
+            fill: none;
+            stroke-width: 1.5;
+        }
+        .contract-curve {
+            stroke: #ff4081;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+        .allocation-point {
+            fill: #ffab00;
+            stroke: white;
+            stroke-width: 2;
+            cursor: move;
+        }
+        .price-line {
+            stroke: #39ff14;
+            stroke-width: 1.5;
+            stroke-dasharray: 3,3;
+        }
+        .utility-label {
+            fill: #aaa;
+            font-size: 12px;
+        }
+        .pareto-region {
+            fill: rgba(0, 198, 255, 0.1);
+            stroke: #00c6ff;
+            stroke-width: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="visualization" id="visualization"></div>
+        <div class="controls">
+            <div class="control-group">
+                <h3>Agent 1 Preferences</h3>
+                <label for="alpha1">Good X Preference (α): <span class="value-display" id="alpha1Value">0.5</span></label>
+                <input type="range" id="alpha1" min="0.1" max="0.9" step="0.1" value="0.5">
+                
+                <label for="beta1">Good Y Preference (β): <span class="value-display" id="beta1Value">0.5</span></label>
+                <input type="range" id="beta1" min="0.1" max="0.9" step="0.1" value="0.5">
+            </div>
+            
+            <div class="control-group">
+                <h3>Agent 2 Preferences</h3>
+                <label for="alpha2">Good X Preference (α): <span class="value-display" id="alpha2Value">0.5</span></label>
+                <input type="range" id="alpha2" min="0.1" max="0.9" step="0.1" value="0.5">
+                
+                <label for="beta2">Good Y Preference (β): <span class="value-display" id="beta2Value">0.5</span></label>
+                <input type="range" id="beta2" min="0.1" max="0.9" step="0.1" value="0.5">
+            </div>
+            
+            <div class="control-group">
+                <h3>Initial Endowments</h3>
+                <label for="endowment1">Agent 1's X: <span class="value-display" id="endowment1Value">0.7</span></label>
+                <input type="range" id="endowment1" min="0.1" max="0.9" step="0.1" value="0.7">
+                
+                <label for="endowment2">Agent 1's Y: <span class="value-display" id="endowment2Value">0.3</span></label>
+                <input type="range" id="endowment2" min="0.1" max="0.9" step="0.1" value="0.3">
+            </div>
+            
+            <div class="info-box">
+                <p>Current Allocation:</p>
+                <p>Agent 1: (<span id="agent1X">0.7</span>, <span id="agent1Y">0.3</span>)</p>
+                <p>Agent 2: (<span id="agent2X">0.3</span>, <span id="agent2Y">0.7</span>)</p>
+                <p>Utility 1: <span id="utility1">0.0</span></p>
+                <p>Utility 2: <span id="utility2">0.0</span></p>
+                <p>Pareto Efficient: <span id="isPareto">No</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parameters
+        let params = {
+            alpha1: 0.5,
+            beta1: 0.5,
+            alpha2: 0.5,
+            beta2: 0.5,
+            endowment1: 0.7,
+            endowment2: 0.3
+        };
+
+        // Set up the visualization
+        const margin = {top: 40, right: 40, bottom: 40, left: 40};
+        const width = document.querySelector('.visualization').clientWidth - margin.left - margin.right;
+        const height = document.querySelector('.visualization').clientHeight - margin.top - margin.bottom;
+
+        const svg = d3.select('#visualization')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        // Scales
+        const x = d3.scaleLinear()
+            .domain([0, 1])
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain([0, 1])
+            .range([height, 0]);
+
+        // Add axes
+        const xAxis = svg.append('g')
+            .attr('class', 'axis')
+            .attr('transform', `translate(0,${height})`)
+            .call(d3.axisBottom(x));
+
+        const yAxis = svg.append('g')
+            .attr('class', 'axis')
+            .call(d3.axisLeft(y));
+
+        // Add labels
+        svg.append('text')
+            .attr('x', width/2)
+            .attr('y', height + margin.bottom - 5)
+            .attr('text-anchor', 'middle')
+            .text('Good X');
+
+        svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -height/2)
+            .attr('y', -margin.left + 15)
+            .attr('text-anchor', 'middle')
+            .text('Good Y');
+
+        // Utility functions
+        function utility1(x, y) {
+            return Math.pow(x, params.alpha1) * Math.pow(y, params.beta1);
+        }
+
+        function utility2(x, y) {
+            return Math.pow(1-x, params.alpha2) * Math.pow(1-y, params.beta2);
+        }
+
+        // Draw indifference curves
+        function drawIndifferenceCurves() {
+            // Clear previous curves
+            svg.selectAll('.indifference-curve').remove();
+            
+            // Draw curves for agent 1
+            for (let u = 0.1; u <= 0.9; u += 0.2) {
+                const curve = [];
+                for (let x = 0.01; x <= 1; x += 0.01) {
+                    const y = Math.pow(u / Math.pow(x, params.alpha1), 1/params.beta1);
+                    if (y <= 1) curve.push([x, y]);
+                }
+                
+                const line = d3.line()
+                    .x(d => x(d[0]))
+                    .y(d => y(d[1]));
+                
+                svg.append('path')
+                    .datum(curve)
+                    .attr('class', 'indifference-curve')
+                    .attr('stroke', '#00c6ff')
+                    .attr('d', line);
+            }
+            
+            // Draw curves for agent 2
+            for (let u = 0.1; u <= 0.9; u += 0.2) {
+                const curve = [];
+                for (let x = 0.01; x <= 1; x += 0.01) {
+                    const y = 1 - Math.pow(u / Math.pow(1-x, params.alpha2), 1/params.beta2);
+                    if (y >= 0) curve.push([x, y]);
+                }
+                
+                const line = d3.line()
+                    .x(d => x(d[0]))
+                    .y(d => y(d[1]));
+                
+                svg.append('path')
+                    .datum(curve)
+                    .attr('class', 'indifference-curve')
+                    .attr('stroke', '#ffab00')
+                    .attr('d', line);
+            }
+        }
+
+        // Draw contract curve
+        function drawContractCurve() {
+            svg.selectAll('.contract-curve').remove();
+            
+            const curve = [];
+            for (let x = 0.01; x <= 0.99; x += 0.01) {
+                const y = findParetoY(x);
+                if (y !== null) curve.push([x, y]);
+            }
+            
+            const line = d3.line()
+                .x(d => x(d[0]))
+                .y(d => y(d[1]));
+            
+            svg.append('path')
+                .datum(curve)
+                .attr('class', 'contract-curve')
+                .attr('d', line);
+        }
+
+        // Find Pareto efficient Y for given X
+        function findParetoY(x) {
+            const step = 0.001;
+            let bestY = null;
+            let bestUtility = -Infinity;
+            
+            for (let y = 0.01; y <= 0.99; y += step) {
+                const u1 = utility1(x, y);
+                const u2 = utility2(x, y);
+                
+                if (u1 * u2 > bestUtility) {
+                    bestUtility = u1 * u2;
+                    bestY = y;
+                }
+            }
+            
+            return bestY;
+        }
+
+        // Draw allocation point
+        let allocationPoint = svg.append('circle')
+            .attr('class', 'allocation-point')
+            .attr('r', 6)
+            .attr('cx', x(params.endowment1))
+            .attr('cy', y(params.endowment2))
+            .call(d3.drag()
+                .on('drag', dragged)
+                .on('end', dragEnded));
+
+        // Drag behavior
+        function dragged(event) {
+            const newX = Math.max(0, Math.min(1, x.invert(event.x)));
+            const newY = Math.max(0, Math.min(1, y.invert(event.y)));
+            
+            allocationPoint
+                .attr('cx', x(newX))
+                .attr('cy', y(newY));
+            
+            updateInfo(newX, newY);
+        }
+
+        function dragEnded(event) {
+            const newX = Math.max(0, Math.min(1, x.invert(event.x)));
+            const newY = Math.max(0, Math.min(1, y.invert(event.y)));
+            
+            params.endowment1 = newX;
+            params.endowment2 = newY;
+            
+            updateVisualization();
+        }
+
+        // Update information display
+        function updateInfo(x, y) {
+            document.getElementById('agent1X').textContent = x.toFixed(2);
+            document.getElementById('agent1Y').textContent = y.toFixed(2);
+            document.getElementById('agent2X').textContent = (1-x).toFixed(2);
+            document.getElementById('agent2Y').textContent = (1-y).toFixed(2);
+            
+            const u1 = utility1(x, y);
+            const u2 = utility2(x, y);
+            
+            document.getElementById('utility1').textContent = u1.toFixed(3);
+            document.getElementById('utility2').textContent = u2.toFixed(3);
+            
+            const isPareto = Math.abs(findParetoY(x) - y) < 0.01;
+            document.getElementById('isPareto').textContent = isPareto ? 'Yes' : 'No';
+            document.getElementById('isPareto').style.color = isPareto ? '#39ff14' : '#ff4081';
+        }
+
+        // Update visualization
+        function updateVisualization() {
+            drawIndifferenceCurves();
+            drawContractCurve();
+            updateInfo(params.endowment1, params.endowment2);
+        }
+
+        // Event listeners for controls
+        document.querySelectorAll('input[type="range"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                e.target.nextElementSibling.textContent = value.toFixed(1);
+                
+                switch(e.target.id) {
+                    case 'alpha1': params.alpha1 = value; break;
+                    case 'beta1': params.beta1 = value; break;
+                    case 'alpha2': params.alpha2 = value; break;
+                    case 'beta2': params.beta2 = value; break;
+                    case 'endowment1': 
+                        params.endowment1 = value;
+                        allocationPoint.attr('cx', x(value));
+                        break;
+                    case 'endowment2':
+                        params.endowment2 = value;
+                        allocationPoint.attr('cy', y(value));
+                        break;
+                }
+                
+                updateVisualization();
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const newWidth = document.querySelector('.visualization').clientWidth - margin.left - margin.right;
+            const newHeight = document.querySelector('.visualization').clientHeight - margin.top - margin.bottom;
+            
+            svg.attr('width', newWidth + margin.left + margin.right)
+               .attr('height', newHeight + margin.top + margin.bottom);
+            
+            x.range([0, newWidth]);
+            y.range([newHeight, 0]);
+            
+            xAxis.call(d3.axisBottom(x));
+            yAxis.call(d3.axisLeft(y));
+            
+            allocationPoint
+                .attr('cx', x(params.endowment1))
+                .attr('cy', y(params.endowment2));
+            
+            updateVisualization();
+        });
+
+        // Initial visualization
+        updateVisualization();
+    </script>
+</body>
+</html> 
