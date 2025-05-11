@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schelling's Segregation Model</title>
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace; /* Monospaced for a slightly 'data' feel */
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e; /* Dark desaturated blue */
+            color: #e0e6f0; /* Light grey-blue */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+        header {
+            width: 100%;
+            background-color: #162447; /* Darker blue */
+            color: #1f75fe; /* Bright blue */
+            padding: 15px 0;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(31, 117, 254, 0.7);
+            border-bottom: 2px solid #1f75fe;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 1400px;
+            padding: 10px;
+        }
+        .controls-panel {
+            background-color: rgba(22, 36, 71, 0.9); /* Semi-transparent dark blue */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(31, 117, 254, 0.2);
+            margin: 10px;
+            width: 100%;
+            max-width: 380px;
+            backdrop-filter: blur(3px);
+        }
+        .controls-panel h3 {
+            margin-top: 0;
+            color: #1f75fe;
+            border-bottom: 1px solid rgba(31, 117, 254, 0.5);
+            padding-bottom: 8px;
+        }
+        .control-group { margin-bottom: 15px; }
+        .control-group label { display: block; margin-bottom: 6px; font-size: 0.9em; }
+        .control-group input[type="range"] { width: 100%; cursor: pointer; accent-color: #e94560; } /* Contrast color */
+        .control-group input[type="number"] { width: 60px; background-color: #1a1a2e; color: #e0e6f0; border: 1px solid #1f75fe; padding: 5px; border-radius: 3px;}
+        .control-group select { background-color: #1a1a2e; color: #e0e6f0; border: 1px solid #1f75fe; padding: 5px; border-radius: 3px; }
+        .control-group span { font-weight: bold; color: #e94560; }
+        .button-group button {
+            background-color: #1f75fe;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            margin-right: 8px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .button-group button:hover { background-color: #125fce; }
+        .button-group button:active { transform: translateY(1px); }
+        #simulation-canvas {
+            border: 2px solid #1f75fe;
+            border-radius: 8px;
+            background-color: #101020; /* Very dark for canvas */
+            box-shadow: 0 0 15px rgba(31, 117, 254, 0.15);
+            margin: 10px;
+            cursor: default;
+        }
+        .metrics-display {
+            background-color: rgba(22, 36, 71, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            width: calc(100% - 30px); /* Match controls panel width */
+            max-width: 380px;
+            margin-top:15px;
+            box-shadow: 0 0 10px rgba(31,117,254,0.15);
+        }
+        .metrics-display p { margin: 6px 0; }
+        .metrics-display strong { color: #1f75fe; }
+    </style>
+</head>
+<body>
+    <header>Schelling's Model of Segregation</header>
+
+    <div class="container">
+        <div class="controls-panel">
+            <h3>Simulation Parameters</h3>
+            <div class="control-group">
+                <label for="gridSize">Grid Size (N x N): <span id="gridSizeValue">50</span></label>
+                <input type="range" id="gridSize" min="10" max="100" step="5" value="50">
+            </div>
+            <div class="control-group">
+                <label for="density">Agent Density (%): <span id="densityValue">90</span></label>
+                <input type="range" id="density" min="30" max="98" step="1" value="90">
+            </div>
+            <div class="control-group">
+                <label for="tolerance">Similarity Threshold (% wanted): <span id="toleranceValue">30</span></label>
+                <input type="range" id="tolerance" min="0" max="100" step="5" value="30">
+            </div>
+             <div class="control-group">
+                <label for="numTypes">Number of Agent Types: <span id="numTypesValue">2</span></label>
+                <input type="range" id="numTypes" min="2" max="5" step="1" value="2">
+            </div>
+            <div class="control-group">
+                <label for="neighborhoodType">Neighborhood:</label>
+                <select id="neighborhoodType">
+                    <option value="moore" selected>Moore (8 cells)</option>
+                    <option value="von_neumann">Von Neumann (4 cells)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="speed">Simulation Speed (ms/iteration):</label>
+                <input type="number" id="speed" min="0" max="1000" step="50" value="100">
+            </div>
+            <div class="button-group">
+                <button id="startButton">Start</button>
+                <button id="stopButton">Stop</button>
+                <button id="stepButton">Step</button>
+                <button id="resetButton">Reset</button>
+            </div>
+            <div class="metrics-display">
+                <p>Iteration: <strong id="iterationCount">0</strong></p>
+                <p>Unhappy Agents: <strong id="unhappyCount">0</strong></p>
+                <p>Avg. Similarity: <strong id="avgSimilarity">0%</strong></p>
+            </div>
+        </div>
+
+        <canvas id="simulation-canvas"></canvas>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const gridSizeSlider = document.getElementById('gridSize');
+        const densitySlider = document.getElementById('density');
+        const toleranceSlider = document.getElementById('tolerance');
+        const numTypesSlider = document.getElementById('numTypes');
+        const neighborhoodTypeSelect = document.getElementById('neighborhoodType');
+        const speedInput = document.getElementById('speed');
+
+        const gridSizeValueSpan = document.getElementById('gridSizeValue');
+        const densityValueSpan = document.getElementById('densityValue');
+        const toleranceValueSpan = document.getElementById('toleranceValue');
+        const numTypesValueSpan = document.getElementById('numTypesValue');
+
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const stepButton = document.getElementById('stepButton');
+        const resetButton = document.getElementById('resetButton');
+
+        const iterationCountSpan = document.getElementById('iterationCount');
+        const unhappyCountSpan = document.getElementById('unhappyCount');
+        const avgSimilaritySpan = document.getElementById('avgSimilarity');
+
+        const canvas = document.getElementById('simulation-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- Parameters & State ---
+        let gridSize = 50;
+        let agentDensity = 0.90; // 90% of cells occupied
+        let similarityThreshold = 0.30; // Agents want 30% of neighbors to be same type
+        let numAgentTypes = 2;
+        let neighborhoodType = 'moore';
+        let simulationSpeed = 100; // ms per iteration
+
+        const EMPTY_CELL = 0;
+        let agentColors = ['#1f75fe', '#e94560', '#3ddc97', '#ffc947', '#c879ff']; // Blue, Red, Green, Yellow, Purple
+
+        let grid = [];
+        let agents = []; // list of {x, y, type, isHappy}
+        let emptyCells = [];
+
+        let iteration = 0;
+        let unhappyAgentCount = 0;
+        let averageSimilarity = 0;
+        letisRunning = false;
+        let animationFrameId;
+        let lastTimestamp = 0;
+
+        // --- Grid & Agent Functions ---
+        function initializeGrid() {
+            grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(EMPTY_CELL));
+            agents = [];
+            emptyCells = [];
+            iteration = 0;
+            unhappyAgentCount = 0;
+            averageSimilarity = 0;
+
+            const totalCells = gridSize * gridSize;
+            const numAgentsToPlace = Math.floor(totalCells * agentDensity);
+            
+            let agentCountsPerType = Array(numAgentTypes).fill(0);
+            for(let i=0; i < numAgentsToPlace; ++i) {
+                agentCountsPerType[i % numAgentTypes]++;
+            }
+            // Shuffle types for better initial distribution
+            agentCountsPerType.sort(() => Math.random() - 0.5);
+
+
+            let agentTypeCounter = 0;
+            for (let i = 0; i < numAgentsToPlace; i++) {
+                let x, y;
+                do {
+                    x = Math.floor(Math.random() * gridSize);
+                    y = Math.floor(Math.random() * gridSize);
+                } while (grid[y][x] !== EMPTY_CELL);
+                
+                let currentAgentType = 0;
+                for(let typeIdx = 0; typeIdx < numAgentTypes; ++typeIdx) {
+                    if (agentCountsPerType[typeIdx] > 0) {
+                        currentAgentType = typeIdx + 1; // Agent types are 1-indexed
+                        agentCountsPerType[typeIdx]--;
+                        break;
+                    }
+                }
+                grid[y][x] = currentAgentType;
+                agents.push({ x, y, type: currentAgentType, isHappy: false });
+            }
+
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    if (grid[r][c] === EMPTY_CELL) {
+                        emptyCells.push({ x: c, y: r });
+                    }
+                }
+            }
+            updateAllAgentHappiness();
+            updateMetricsDisplay();
+        }
+
+        function getNeighbors(x, y) {
+            const neighbors = [];
+            let deltas = [];
+
+            if (neighborhoodType === 'moore') {
+                deltas = [
+                    [-1, -1], [0, -1], [1, -1],
+                    [-1,  0],          [1,  0],
+                    [-1,  1], [0,  1], [1,  1]
+                ];
+            } else { // von_neumann
+                deltas = [
+                          [0, -1],
+                    [-1, 0],      [1, 0],
+                          [0,  1]
+                ];
+            }
+
+            for (const [dx, dy] of deltas) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize && grid[ny][nx] !== EMPTY_CELL) {
+                    neighbors.push({ x: nx, y: ny, type: grid[ny][nx] });
+                }
+            }
+            return neighbors;
+        }
+
+        function isAgentHappy(agent) {
+            const neighbors = getNeighbors(agent.x, agent.y);
+            if (neighbors.length === 0) return true; // Happy if no neighbors
+
+            const sameTypeNeighbors = neighbors.filter(n => n.type === agent.type).length;
+            const similarityRatio = sameTypeNeighbors / neighbors.length;
+            return similarityRatio >= similarityThreshold;
+        }
+        
+        function updateAllAgentHappiness() {
+            unhappyAgentCount = 0;
+            let totalSimilaritySum = 0;
+            let agentsWithNeighbors = 0;
+
+            agents.forEach(agent => {
+                agent.isHappy = isAgentHappy(agent);
+                if (!agent.isHappy) {
+                    unhappyAgentCount++;
+                }
+
+                const neighbors = getNeighbors(agent.x, agent.y);
+                if (neighbors.length > 0) {
+                    const sameTypeNeighbors = neighbors.filter(n => n.type === agent.type).length;
+                    totalSimilaritySum += (sameTypeNeighbors / neighbors.length);
+                    agentsWithNeighbors++;
+                } else {
+                     totalSimilaritySum += 1; // Agent with no neighbors is 100% similar to its neighborhood
+                     agentsWithNeighbors++;
+                }
+            });
+             averageSimilarity = agentsWithNeighbors > 0 ? (totalSimilaritySum / agentsWithNeighbors) * 100 : 100;
+        }
+
+
+        function simulationStep() {
+            if (emptyCells.length === 0) { // No place to move
+                isRunning = false;
+                return false; // No moves made
+            }
+
+            const unhappyAgents = agents.filter(a => !a.isHappy);
+            if (unhappyAgents.length === 0) {
+                isRunning = false; // Everyone is happy
+                return false; // No moves made
+            }
+
+            // Shuffle unhappy agents to avoid bias in movement order
+            unhappyAgents.sort(() => Math.random() - 0.5);
+            
+            let movedCount = 0;
+            for (const agent of unhappyAgents) {
+                if (emptyCells.length === 0) break; // No more empty spots
+
+                const currentAgentIndexInAgentsList = agents.findIndex(a => a.x === agent.x && a.y === agent.y);
+
+                // Pick a random empty cell
+                const randomIndex = Math.floor(Math.random() * emptyCells.length);
+                const newPos = emptyCells.splice(randomIndex, 1)[0]; // Remove from empty and get it
+
+                // Update grid
+                grid[agent.y][agent.x] = EMPTY_CELL;
+                grid[newPos.y][newPos.x] = agent.type;
+
+                // Add old position to empty cells
+                emptyCells.push({ x: agent.x, y: agent.y });
+
+                // Update agent's position in the agents list
+                agents[currentAgentIndexInAgentsList].x = newPos.x;
+                agents[currentAgentIndexInAgentsList].y = newPos.y;
+                
+                movedCount++;
+            }
+            
+            if (movedCount > 0) {
+                iteration++;
+                updateAllAgentHappiness(); // Recalculate happiness for all after moves
+            } else if (unhappyAgents.length > 0 && emptyCells.length > 0) {
+                // This case means unhappy agents exist, but no one could move (should be rare if handled well)
+                // Or, more likely, all unhappy agents evaluated in this step found no better spot (not modeled here)
+                // For this simple model, if unhappy agents exist & empty spots exist, a move should occur.
+                // The main reason for no moves is if all unhappy agents are processed but only one is left and it has no valid move
+                // (which our current logic of picking any random empty cell doesn't prevent).
+                // But if no one moved and unhappy agents remain, we might be stuck or converged.
+                // To be safe, let's consider this a potential convergence if no one moves.
+                // For now, the "all happy" or "no empty cells" check handles most convergences.
+            }
+             updateMetricsDisplay();
+            return movedCount > 0;
+        }
+
+        // --- Drawing Functions ---
+        function drawGrid() {
+            const cellSize = Math.floor(canvas.width / gridSize);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    const cellType = grid[r][c];
+                    if (cellType === EMPTY_CELL) {
+                        ctx.fillStyle = '#2a2a3e'; // Darker empty cell
+                    } else {
+                        ctx.fillStyle = agentColors[cellType - 1];
+                    }
+                    ctx.fillRect(c * cellSize, r * cellSize, cellSize -1, cellSize -1); // -1 for grid lines
+
+                    // Optionally highlight unhappy agents
+                    if (cellType !== EMPTY_CELL) {
+                        const agent = agents.find(a => a.x === c && a.y === r);
+                        if (agent && !agent.isHappy) {
+                            ctx.strokeStyle = 'white';
+                            ctx.lineWidth = Math.max(1, Math.floor(cellSize/10));
+                            ctx.strokeRect(c * cellSize + ctx.lineWidth/2, r * cellSize + ctx.lineWidth/2, 
+                                           cellSize -1 - ctx.lineWidth, cellSize -1 - ctx.lineWidth);
+                        }
+                    }
+                }
+            }
+        }
+        
+        function updateMetricsDisplay() {
+            iterationCountSpan.textContent = iteration;
+            unhappyCountSpan.textContent = unhappyAgentCount;
+            avgSimilaritySpan.textContent = averageSimilarity.toFixed(1) + '%';
+        }
+
+        // --- Simulation Loop ---
+        function loop(timestamp) {
+            if (!isRunning) return;
+
+            const elapsed = timestamp - lastTimestamp;
+            if (elapsed >= simulationSpeed) {
+                lastTimestamp = timestamp;
+                const moved = simulationStep();
+                drawGrid();
+                if (!moved && unhappyAgentCount === 0) { // Converged or stable
+                    console.log("Simulation converged or stabilized.");
+                    isRunning = false;
+                    stopButton.textContent = "Start";
+                }
+            }
+            animationFrameId = requestAnimationFrame(loop);
+        }
+
+        // --- Event Listeners & Setup ---
+        function setupControls() {
+            gridSizeSlider.oninput = () => { gridSizeValueSpan.textContent = gridSizeSlider.value; resetSimulation(); };
+            densitySlider.oninput = () => { densityValueSpan.textContent = densitySlider.value; resetSimulation(); };
+            toleranceSlider.oninput = () => { toleranceValueSpan.textContent = toleranceSlider.value; resetSimulation(false); }; // Don't regen grid, just re-eval happiness
+            numTypesSlider.oninput = () => { numTypesValueSpan.textContent = numTypesSlider.value; resetSimulation(); };
+            neighborhoodTypeSelect.onchange = () => { resetSimulation(false);};
+            speedInput.onchange = () => { simulationSpeed = parseInt(speedInput.value); };
+
+            startButton.onclick = () => {
+                if (!isRunning) {
+                    isRunning = true;
+                    lastTimestamp = performance.now();
+                    requestAnimationFrame(loop);
+                    startButton.textContent = "Running...";
+                    stopButton.textContent = "Stop";
+                }
+            };
+            stopButton.onclick = () => {
+                isRunning = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                startButton.textContent = "Start";
+                stopButton.textContent = "Stopped";
+            };
+            stepButton.onclick = () => {
+                if (!isRunning) {
+                    simulationStep();
+                    drawGrid();
+                }
+            };
+            resetButton.onclick = () => resetSimulation();
+        }
+
+        function resetSimulation(fullReset = true) {
+            isRunning = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            startButton.textContent = "Start";
+            stopButton.textContent = "Stop";
+
+            gridSize = parseInt(gridSizeSlider.value);
+            agentDensity = parseInt(densitySlider.value) / 100;
+            similarityThreshold = parseInt(toleranceSlider.value) / 100;
+            numAgentTypes = parseInt(numTypesSlider.value);
+            neighborhoodType = neighborhoodTypeSelect.value;
+
+            // Adjust canvas size
+            const maxCanvasWidth = Math.min(window.innerWidth * 0.6, 800);
+            const cellSizeCandidate = Math.floor(maxCanvasWidth / gridSize);
+            canvas.width = cellSizeCandidate * gridSize;
+            canvas.height = cellSizeCandidate * gridSize;
+            
+            if (fullReset) {
+                initializeGrid();
+            } else { // Partial reset: update happiness based on new threshold/neighborhood without regenerating agents
+                iteration = 0; // Reset iteration if only re-evaluating
+                updateAllAgentHappiness();
+                updateMetricsDisplay();
+            }
+            drawGrid();
+        }
+
+        // --- Initial ---
+        window.onload = () => {
+            setupControls();
+            resetSimulation();
+        };
+
+        // Responsive canvas sizing
+        window.onresize = () => {
+           if (!isRunning) resetSimulation(false); // Redraw with new size if not running
+        };
+
+    </script>
+</body>
+</html>
