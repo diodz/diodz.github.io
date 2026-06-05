@@ -1,50 +1,241 @@
+:root {
+    --text: #111;
+    --muted: #555;
+    --border: #d8d8d8;
+    --link: #174a8b;
+    --bg: #fff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
     margin: 0;
-    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.6;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin-right: 10px;
-}
-
-nav ul li a {
-    color: #fff;
+a {
+    color: var(--link);
     text-decoration: none;
 }
 
-main {
-    padding: 2rem;
+a:hover,
+a:focus {
+    text-decoration: underline;
 }
 
-article {
-    margin-bottom: 2rem;
+.container {
+    width: min(860px, calc(100% - 40px));
+    margin: 0 auto;
 }
 
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: 12px;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+}
+
+.skip-link:focus {
+    left: 12px;
+    z-index: 10;
+}
+
+.site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0 14px;
+}
+
+.site-header .container {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.site-title {
+    color: var(--text);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.site-nav a {
+    color: var(--text);
+}
+
+.main-content {
+    padding: 48px 0 64px;
+}
+
+.intro {
+    max-width: 760px;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.25;
+}
+
+h1 {
+    margin: 0 0 4px;
+    font-size: 34px;
+}
+
+h2 {
+    margin: 46px 0 18px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 22px;
+}
+
+h3 {
+    margin: 0 0 4px;
+    font-size: 18px;
+}
+
+p {
+    margin: 0 0 14px;
+}
+
+.subtitle {
+    margin-bottom: 22px;
+    color: var(--muted);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+.contact-line,
+.meta,
+.role,
+.post-date,
+.post-meta,
+.post-list span {
+    color: var(--muted);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.entry {
+    margin-bottom: 24px;
+}
+
+.entry.compact {
+    margin-bottom: 18px;
+}
+
+.entry p:last-child {
+    margin-bottom: 0;
+}
+
+.link-list,
+.plain-list {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.link-list li,
+.plain-list li {
+    margin-bottom: 7px;
+}
+
+.post-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.post-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    border-bottom: 1px solid #ececec;
+    padding: 8px 0;
+}
+
+.post-header {
+    margin-bottom: 32px;
+}
+
+.post-content {
+    max-width: 760px;
+}
+
+.post-content h2,
+.post-content h3 {
+    border-bottom: 0;
+}
+
+.post-content img,
+.post-content iframe,
 canvas {
     max-width: 100%;
-    height: auto;
 }
 
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+.post-content pre {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    padding: 14px;
+}
+
+.post-footer {
+    margin-top: 42px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.site-footer {
+    border-top: 1px solid var(--border);
+    padding: 18px 0 28px;
+    color: var(--muted);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+@media (max-width: 680px) {
+    body {
+        font-size: 16px;
+    }
+
+    .container {
+        width: min(100% - 28px, 860px);
+    }
+
+    .site-header .container,
+    .footer-inner,
+    .post-list li {
+        display: block;
+    }
+
+    .site-nav {
+        margin-top: 8px;
+    }
+
+    .main-content {
+        padding-top: 34px;
+    }
 }

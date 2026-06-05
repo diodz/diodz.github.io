@@ -1,65 +1,196 @@
----
-layout: default
-title: Home
----
-<main class="container mx-auto px-4 max-w-4xl">
-    <section class="mb-16">
-        <h1 class="text-4xl font-bold mb-6 text-gray-900">Welcome to My Page</h1>
-        <div class="prose prose-lg max-w-none text-gray-600">
-            <p class="mb-4">
-                As an economist and data scientist, I explore the intersection of economic theory, 
-                data science, and technology. This space serves as a collection of my 
-                research and topics that I find interesting.
-            </p>
-            <p class="mb-4">
-                Feel free to explore and reach out if you'd like to discuss any of these posts <a href="mailto:diegodiaz@uchicago.edu">(diegodiaz@uchicago.edu)</a>.
-            </p>
-            
-        </div>
-    </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Diego A. Diaz is an applied economist and data scientist working on markets, public policy, causal inference, and reproducible economic measurement.">
+    <title>Diego A. Diaz</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <section>
-        <h2 class="text-3xl font-bold mb-8 text-gray-900">Latest Posts</h2>
-        <div class="space-y-12">
-            {% for post in site.posts %}
-            <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div class="p-8">
-                    <div class="flex items-center text-sm text-gray-500 mb-4">
-                        <time datetime="{{ post.date | date_to_xmlschema }}">
-                            {{ post.date | date: "%B %-d, %Y" }}
-                        </time>
-                        {% if post.categories.size > 0 %}
-                        <span class="mx-2">•</span>
-                        <div class="flex space-x-2">
-                            {% for category in post.categories %}
-                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                                {{ category }}
-                            </span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <h3 class="text-2xl font-bold mb-4 text-gray-900">
-                        <a href="{{ post.url | relative_url }}" class="hover:text-blue-600 transition-colors duration-200">
-                            {{ post.title }}
-                        </a>
-                    </h3>
-                    
-                    <div class="prose prose-lg max-w-none text-gray-600 mb-6">
-                        {{ post.excerpt | strip_html | truncatewords: 50 }}
-                    </div>
-                    
-                    <a href="{{ post.url | relative_url }}" 
-                       class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
-                        Read more
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            </article>
-            {% endfor %}
+    <header class="site-header">
+        <div class="container">
+            <a class="site-title" href="/">Diego A. Diaz</a>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <a href="#research">Research</a>
+                <a href="#methods">Methods</a>
+                <a href="#contact">Contact</a>
+            </nav>
         </div>
-    </section>
-</main>
+    </header>
+
+    <main id="main" class="container main-content">
+        <section class="intro">
+            <h1>Diego A. Diaz</h1>
+            <p class="subtitle">Applied economist and data scientist</p>
+            <p>
+                I work on empirical questions in markets, public policy, and economic measurement.
+                My work combines econometrics, large-scale data pipelines, and clear writing, with
+                an emphasis on reproducible analysis and careful interpretation.
+            </p>
+            <p>
+                I am especially interested in settings where public data, administrative records,
+                and marketplace data can be used to understand economic behavior and inform decisions.
+                I currently work at Charles River Associates.
+            </p>
+            <p class="contact-line">
+                Berkeley, CA |
+                <a href="mailto:diegodiaz@uchicago.edu">diegodiaz@uchicago.edu</a> |
+                <a href="https://github.com/diodz">GitHub</a> |
+                <a href="https://www.linkedin.com/in/diego-diaz">LinkedIn</a>
+            </p>
+        </section>
+
+        <section id="research">
+            <h2>Published Research and Working Papers</h2>
+
+            <article class="entry">
+                <h3>The Internet Business Pulse: Public Data, Digital Commerce, and the Limits of Monthly Nowcasting</h3>
+                <p>
+                    Constructs a monthly public-data indicator of internet-facing business activity
+                    from Census retail, e-commerce, and Business Formation Statistics, then validates
+                    it against quarterly retail e-commerce growth.
+                </p>
+                <p class="meta">
+                    Economic indicators, nowcasting, PCA, public Census data, reproducibility.
+                    <a href="/assets/papers/internet-business-pulse.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>The Small-Business Sensitivity Index: Local Retail Demand and High-Propensity Business Formation</h3>
+                <p>
+                    Links Census Business Formation Statistics to Monthly State Retail Sales to measure
+                    how high-propensity business applications comove with local retail demand across
+                    U.S. states.
+                </p>
+                <p class="meta">
+                    State panels, fixed effects, clustered inference, public data.
+                    <a href="/assets/papers/small-business-sensitivity-index.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>From Offline to Online? Local Retail Shocks and the Persistence of Digital Business Formation</h3>
+                <p>
+                    Tests whether early COVID offline retail disruption predicted subsequent
+                    employer-oriented business applications, distinguishing local exposure from
+                    broader sectoral reallocation.
+                </p>
+                <p class="meta">
+                    Local projections, difference-in-differences diagnostics, digital adoption, business formation.
+                    <a href="/assets/papers/offline-to-online-business-formation.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>Institutional Quality and Pandemic Resilience: Cross-Country Evidence on Health and Economic Outcomes during COVID-19</h3>
+                <p>
+                    Online preprint with Cristian Larroulet and Andres Marticorena examining how
+                    pre-pandemic institutional quality is associated with COVID-19 mortality,
+                    vaccination rollout, and economic recovery across countries.
+                </p>
+                <p class="meta">
+                    Governance, state capacity, cross-country evidence, pandemic resilience.
+                    <a href="https://www.researchsquare.com/article/rs-9142776/v1">Preprint</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>Administrative capacity and public transfer targeting</h3>
+                <p>
+                    Empirical and structural research pipeline linking rollout exposure, beneficiary
+                    information, local capacity, and cross-state validation in public transfer systems.
+                </p>
+                <p class="meta">
+                    Panel data, public administrative data, structural modeling, reproducibility.
+                    <a href="/assets/papers/administrative-capacity-public-transfer-targeting.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>Short-term rental regulation and housing markets</h3>
+                <p>
+                    Replication package studying platform scale, housing scarcity, and short-term
+                    rental regulation using Airbnb listings, Zillow indices, New York City registration
+                    records, ACS housing data, and policy-event coding.
+                </p>
+                <p class="meta">
+                    Event studies, synthetic control, spatial joins, public-data manifests.
+                    <a href="/assets/papers/short-term-rental-regulation-housing-markets.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>Local AI innovation and firm dynamics</h3>
+                <p>
+                    Commuting-zone panel on AI patenting and firm dynamics using PatentsView,
+                    Census geography, and Business Dynamics Statistics. The current framing is
+                    descriptive, with event-study and Bartik diagnostics reported as supplementary checks.
+                </p>
+                <p class="meta">
+                    Fixed effects, public data, validation reports.
+                    <a href="/assets/papers/local-ai-innovation-firm-dynamics.pdf">PDF</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>An agent-based model of school choice with information asymmetries</h3>
+                <p>
+                    Published in the <em>Journal of Simulation</em>. The paper studies school-choice
+                    policies with heterogeneous agents and information asymmetries, using data from
+                    Santiago schools to simulate the 2010 traffic-light information policy.
+                </p>
+                <p class="meta">
+                    Simulation, optimization, policy communication.
+                    <a href="https://www.tandfonline.com/doi/full/10.1080/17477778.2019.1679674">Article</a>
+                </p>
+            </article>
+
+            <article class="entry">
+                <h3>Another case of the middle-income trap: Chile, 1900-1939</h3>
+                <p>
+                    Published in <em>Revista de Historia Economica / Journal of Iberian and Latin
+                    American Economic History</em>. The paper combines economic history with
+                    quantitative evidence on Chile's early twentieth-century growth slowdown.
+                </p>
+                <p class="meta">
+                    Economic history, synthetic control, institutional change.
+                    <a href="https://www.cambridge.org/core/journals/revista-de-historia-economica-journal-of-iberian-and-latin-american-economic-history/article/another-case-of-the-middleincome-trap-chile-19001939/D4D5E0D415E5FA2FFE5B064754D08FD9">Article</a>
+                </p>
+            </article>
+        </section>
+
+        <section id="methods">
+            <h2>Methods and Tools</h2>
+            <p>
+                Python, SQL, PySpark, Databricks, BigQuery, Git, GitHub Actions; causal inference,
+                synthetic control, difference-in-differences, instrumental variables, panel data,
+                forecasting, simulation, demand modeling, and reproducible research workflows.
+            </p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>
+                Email: <a href="mailto:diegodiaz@uchicago.edu">diegodiaz@uchicago.edu</a><br>
+                GitHub: <a href="https://github.com/diodz">github.com/diodz</a><br>
+                LinkedIn: <a href="https://www.linkedin.com/in/diego-diaz">linkedin.com/in/diego-diaz</a>
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <span>2026 Diego A. Diaz</span>
+            <span>
+                <a href="mailto:diegodiaz@uchicago.edu">Email</a> |
+                <a href="https://github.com/diodz">GitHub</a> |
+                <a href="https://www.linkedin.com/in/diego-diaz">LinkedIn</a>
+            </span>
+        </div>
+    </footer>
+</body>
+</html>
