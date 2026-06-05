@@ -54,20 +54,12 @@ a:focus {
 
 .site-header {
     border-bottom: 1px solid var(--border);
-    padding: 22px 0 14px;
+    padding: 16px 0 12px;
 }
 
 .site-header .container {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 24px;
-}
-
-.site-title {
-    color: var(--text);
-    font-size: 24px;
-    font-weight: 700;
+    justify-content: flex-end;
 }
 
 .site-nav {
@@ -225,14 +217,9 @@ canvas {
         width: min(100% - 28px, 860px);
     }
 
-    .site-header .container,
     .footer-inner,
     .post-list li {
         display: block;
-    }
-
-    .site-nav {
-        margin-top: 8px;
     }
 
     .main-content {
